@@ -1,0 +1,23 @@
+  <nav>
+    <a [routerLink]="['/']">
+    <img id="logo" src="/logo.png" width="130" height="50"/>
+  </a>
+    <ul>
+      <li *ngIf="loggedOn" class="dropdown">
+        <button class="dropbtn">{{ loggedUser.username }}</button>
+        <div class="dropdown-content">
+          <a [routerLink]="['/habits']">Habits</a>
+          <a [routerLink]="['/notes']">Notes</a>
+          <a (click)="logout()">Logout</a>
+        </div>
+      </li>
+      <ng-container *ngIf="!loggedOn">
+        <li *ngIf="!isLoginPage" [class.active]="menuActiveLink === 'Login'">
+          <a [routerLink]="['/login']">Login</a>
+        </li>
+        <li *ngIf="!isRegisterPage" [class.active]="menuActiveLink === 'Register'">
+          <a [routerLink]="['/register']">Register</a>
+        </li>
+      </ng-container>
+    </ul>
+  </nav>

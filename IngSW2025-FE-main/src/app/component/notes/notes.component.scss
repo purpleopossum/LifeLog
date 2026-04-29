@@ -1,0 +1,34 @@
+.notes-page {
+  max-width: 600px;
+  margin: auto;
+}
+
+.note-card {
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  padding: 10px;
+  background-color: #0094fd;
+}
+
+.note-date {
+  color: #555;
+}
+
+.note-habit {
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.note-text {
+  margin-top: 6px;
+  padding: 10px;
+}

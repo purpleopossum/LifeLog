@@ -1,0 +1,18 @@
+<section id="login">
+  <form (ngSubmit)="register()" #form="ngForm">
+    <h2>Register</h2>
+    <label>Username:</label>
+    <input type="text" [(ngModel)]="username" name="username" required />
+      <label>Email:</label>
+    <input type="text" [(ngModel)]="email" name="email" required />
+    <label>Password:</label>
+    <input type="password" [(ngModel)]="password" name="password" required />
+    <button type="submit" [disabled]="form.invalid">Register</button>
+    <p>Hai già un account? <a href="/login">Esegui il Login!</a></p>
+    <div *ngIf="errorMessage" style="color: red; margin-top: 10px;">
+      {{ errorMessage }}
+    </div>
+    
+  </form>
+</section>
+

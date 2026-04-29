@@ -1,0 +1,22 @@
+<div class="carousel-wrapper">
+  <div class="selected-date-label">
+    {{ getDayLabel(selectedDate) }}
+  </div>
+
+  <div class="carousel-container">
+    <button class="arrow" (click)="moveSelection(-1)">‹</button>
+
+    <div class="days">
+      <div
+        *ngFor="let day of getDaysToShow()"
+        class="day"
+        [class.today]="isToday(day)"
+        [class.selected]="isSelected(day)"
+      >
+        {{ day.getDate() }}
+      </div>
+    </div>
+
+    <button class="arrow" (click)="moveSelection(1)">›</button>
+  </div>
+</div>

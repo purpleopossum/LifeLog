@@ -1,0 +1,20 @@
+<div class="habit-dialog">
+  <form class="habit-form" #form="ngForm">
+    <div class="title">
+      <input type="text" matInput [(ngModel)]="title" name="title" maxlength="26" placeholder="TITLE" required/>
+    </div>
+    <div class="description">
+      <textarea id="description" [(ngModel)]="description" name="description" maxlength="100" placeholder="DESCRIPTION"></textarea>
+    </div>
+    <select matInput [(ngModel)]="partOfDay" name="partOfDay">
+      <option value="Any">Any time</option>
+      <option value="Morning">Morning</option>
+      <option value="Evening">Evening</option>
+      <option value="Night">Night</option>
+    </select>
+    <div class="actions">
+      <button type="button" (click)="onNoClick()">Cancel</button>
+      <button type="submit" [disabled]="form.invalid" (click)="save()">Save</button>
+    </div>
+  </form>
+</div>

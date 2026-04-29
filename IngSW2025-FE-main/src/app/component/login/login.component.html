@@ -1,0 +1,15 @@
+<section id="login">
+  <form (ngSubmit)="login()" #form="ngForm">
+    <h2>Login</h2>
+    <label>Username:</label>
+    <input type="text" [(ngModel)]="username" name="username" required />
+    <label>Password:</label>
+    <input type="password" [(ngModel)]="password" name="password" required />
+    <button type="submit" [disabled]="form.invalid">Login</button>
+    <p>Non hai un account? <a href="/register">Registrati ora!</a></p>
+    <div *ngIf="errorMessage" style="color: red;">
+      {{ errorMessage }}
+    </div>
+    
+  </form>
+</section>
