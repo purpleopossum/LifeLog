@@ -11,6 +11,7 @@ yarn-error.log*
 .npm/
 .yarn/
 
+node_modules/
 .gradle/
 build/
 dist/
