@@ -1,0 +1,53 @@
+:host {
+  display: block;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+#pageTitle{
+  width: 100%;
+  padding-left: 20px;
+}
+
+.journal-container {
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  background: #f8f8f8;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.journal-container input[type="text"] {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+.journal-container textarea {
+  width: 95%;
+  height: 200px;
+  padding: 10px;
+  font-size: 16px;
+  resize: inherit;
+  margin-bottom: 15px;
+}
+
+.journal-container .button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #0094fd;
+  color: white;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.journal-container .button:hover {
+  opacity: 0.9;
+}

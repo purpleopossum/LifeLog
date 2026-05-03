@@ -6,15 +6,11 @@ import {lastValueFrom} from 'rxjs';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
   MatDialogRef,
-  MatDialogTitle
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatButton, MatButtonModule} from '@angular/material/button';
+import { MatButtonModule} from '@angular/material/button';
 import { NgFor, NgIf, CommonModule } from '@angular/common';
 import { Checkin } from '../../dto/checkin.model';
 import { CheckinService } from '../../service/checkin.service';
@@ -33,7 +29,7 @@ import { DayCarouselComponent } from '../day-carousel/day-carousel.component';
   styleUrl: './habits.component.scss'
 })
 export class HabitsComponent implements OnInit {
-  selectedDate: string = new Date().toISOString().split('T')[0];
+  selectedDate: string = new Date().toISOString().split('T')[0] ?? '';
   habits: Habit[] = [];
   checkins: Checkin[] = [];
   editingCheckinId: string | null = null;
@@ -96,7 +92,7 @@ export class HabitsComponent implements OnInit {
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddHabit, {});
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(_result => {
       console.log('The dialog was closed');
       this.loadHabitsForDate(this.selectedDate).then(() => {
         console.log('Habits reloaded');
@@ -108,7 +104,7 @@ export class HabitsComponent implements OnInit {
       data: habit
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(_result => {
       this.loadHabitsForDate(this.selectedDate).then(() => {
         console.log('Habits reloaded');
       });
@@ -116,7 +112,6 @@ export class HabitsComponent implements OnInit {
   }
 
   async updateCheckin(habit: Habit, status: string) {
-    const user = JSON.parse(localStorage.getItem('user')!);
     let checkin = this.getCheckinForHabitAndDate(habit.id!, this.selectedDate);
 
     if (!checkin) {

@@ -1,0 +1,146 @@
+.title-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 30px;
+  margin: 10px 0 10px 0;
+  position: relative;
+}
+
+.switch{
+  padding: 3px 2px;
+  margin: 20px;
+  width: 100px;
+  background-color: #ffffff;
+  border: 3px solid #1976d2;
+  border-radius: 20px;
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.6s ease;
+  position: absolute;
+  right: 20%;
+}
+.switch:hover{
+  background-color: #3580cb;
+  border: 3px solid #1663af;
+}
+h3{
+  text-align: center;
+}
+.journal-page {
+  max-width: 800px;
+  margin: auto;
+}
+.journal-card {
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin: 15px 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  position: relative;
+}
+
+.journal-title {
+  font-size: 18px;
+  color: #151515;
+  font-weight: bold;
+}
+
+.journal-content {
+  padding: 10px;
+  background-color: white;
+  max-height: 60px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.journal-content.expanded,
+.journal-checkins.expanded {
+  max-height: 100%;
+}
+
+.journal-footer {
+  font-size: 12px;
+  background-color: #0094fd;
+  color: #666;
+  padding: 5px 10px 10px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.journal-checkins {
+  padding: 10px;
+  max-height: 16px;
+  overflow: hidden;
+  border-top: 1px solid #ddd;
+  background-color: #f0f8ff;
+}
+
+.journal-checkins h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.journal-checkins ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.journal-checkins li {
+  font-size: 13px;
+  margin: 4px 0;
+}
+.toggle-btn {
+  font-size: 20px;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  color: white;
+  cursor: pointer;
+  transform: rotate(180deg);
+  transition: transform 0.3s;
+}
+
+.toggle-btn.expanded {
+  transform: rotate(0deg);
+}
+
+.actions {
+  position: relative;
+  display: flex;
+}
+
+.actions-content div {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.actions-content div:hover {
+  background-color: #ddd;
+}
+.add-entry {
+  padding: 8px 16px;
+  margin: 20px;
+  position: fixed;
+  bottom: 10px;
+  width: 100px;
+  transform: translateX(-50%);
+  left: 50%;
+  background-color: #ffffff;
+  border: 2px solid #1976d2;
+  border-radius: 20px;
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.6s ease;
+}
+.add-entry:hover{
+  background-color: #1976d2;
+  color: #ffffff;
+}

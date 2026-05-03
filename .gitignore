@@ -15,6 +15,7 @@ node_modules/
 .gradle/
 build/
 dist/
+.angular/cache
 *.class
 *.jar
 *.war

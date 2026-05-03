@@ -6,6 +6,7 @@ import { RegisterComponent } from './component/register/register.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { NotesComponent } from './component/notes/notes.component';
+import { JournalComponent } from './component/journal/journal.component';
 
 
 export const routes: Routes = [
@@ -14,6 +15,7 @@ export const routes: Routes = [
   { path: 'notes', component: NotesComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [NoAuthGuard] },
+  { path: 'journal', component: JournalComponent, canActivate: [NoAuthGuard] }
 ];
 
 

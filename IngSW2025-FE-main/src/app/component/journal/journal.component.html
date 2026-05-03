@@ -1,0 +1,84 @@
+<section class="journal-page">
+
+  <ng-container *ngIf="journal.length > 0; else noEntries">
+
+    <ng-container *ngFor="let entry of journal; let i = index">
+
+      <!-- HEADER MESE -->
+      <h3 *ngIf="shouldShowHeader(i)">
+        {{ getMonthYear(entry.entryDate) }}
+      </h3>
+
+      <div class="journal-card">
+
+        <!-- CONTENT -->
+        <div
+          class="journal-content"
+          [class.expanded]="expandedContent.has(entry.id)"
+        >
+
+          <div
+            *ngIf="entry.content.length > 150"
+            class="toggle-btn"
+            (click)="toggleContent(entry.id)"
+          >
+            ⬆
+          </div>
+
+          <div class="journal-title">
+            {{ entry.title }}
+          </div>
+
+          {{ entry.content }}
+
+        </div>
+
+        <!-- CHECKINS -->
+        <div
+          *ngIf="entry.linkedCheckins?.length"
+          class="journal-checkins"
+          [class.expanded]="expandedCheckins.has(entry.id)"
+        >
+
+          <h4 (click)="toggleCheckins(entry.id)">
+            {{ entry.linkedCheckins.length }} Checkins linked
+          </h4>
+
+          <ul>
+            <li *ngFor="let c of entry.linkedCheckins">
+              {{ c.habit.title }} - {{ c.status }}
+              <span *ngIf="c.note">({{ c.note }})</span>
+            </li>
+          </ul>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="journal-footer">
+
+          <h4>
+            {{ getFormattedDate(entry.entryDate) }}
+          </h4>
+
+          <div class="actions">
+            <div (click)="editEntry(entry.id)">✏️</div>
+            <div (click)="deleteEntry(entry.id)">🗑</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </ng-container>
+
+  </ng-container>
+
+  <ng-template #noEntries>
+    <h1>No Entries. Add Entries to view them here!</h1>
+  </ng-template>
+
+</section>
+
+<button class="add-entry" (click)="addEntry()">
+  New Entry
+</button>
