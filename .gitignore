@@ -15,7 +15,7 @@ node_modules/
 .gradle/
 build/
 dist/
-.angular/cache
+IngSW2025-FE-main/.angular/
 *.class
 *.jar
 *.war
