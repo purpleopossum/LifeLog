@@ -1,0 +1,59 @@
+<div class="stats-section" *ngIf="stats">
+
+  <!-- USER -->
+  <div class="stats-card">
+    <h2>your productivity</h2>
+
+    <div class="progress-container">
+      <div class="progress-bar"
+           [style.width.%]="stats.completedPercentage">
+        {{ stats.completedPercentage }}%
+      </div>
+    </div>
+
+    <h2>last 7 days</h2>
+
+    <div class="stats">
+      <canvas #donutChart width="200"></canvas>
+      <canvas #lineChart></canvas>
+    </div>
+
+    <div class="stats">
+      <div>
+        <h3>longest streak</h3>
+        <h1>{{ stats.longestStreak }}</h1>
+      </div>
+      <div>
+        <h3>current streak</h3>
+        <h1>{{ stats.currentStreak }}</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTNER -->
+  <div *ngIf="stats.partner; else addPartnerTemplate" class="stats-card">
+    <h2>{{ stats.partner.name }}'s productivity</h2>
+
+    <button (click)="unfriend()">Remove</button>
+
+    <div class="progress-container">
+      <div class="progress-bar"
+           [style.width.%]="stats.partner.completedPercentage">
+        {{ stats.partner.completedPercentage }}%
+      </div>
+    </div>
+
+    <div class="stats">
+      <canvas #partnerDonutChart width="200"></canvas>
+      <canvas #partnerLineChart></canvas>
+    </div>
+  </div>
+
+  <!-- ADD PARTNER -->
+  <ng-template #addPartnerTemplate>
+    <div class="stats-card">
+      <button (click)="addPartner()">Add Partner</button>
+    </div>
+  </ng-template>
+
+</div>

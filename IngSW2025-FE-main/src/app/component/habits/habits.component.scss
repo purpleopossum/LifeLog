@@ -1,20 +1,23 @@
-
 .filter-section {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 30px;
+  height: 70px;
   margin: 10px 0 10px 0;
   position: relative;
 }
 
 
 .filter-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.filter-title h2 {
+  margin: 0;
 }
 
 .habit-filter-buttons {

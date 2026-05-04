@@ -20,7 +20,7 @@ export class HabitService {
   }
 
   getByUserId(userId: string): Observable<Habit[]> {
-    return this.http.get<Habit[]>(`/api/habits/user/${userId}`);
+    return this.http.get<Habit[]>(`${this.apiUrl}/user/${userId}`);
   }
 
 

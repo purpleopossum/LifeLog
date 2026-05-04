@@ -1,0 +1,55 @@
+<section id="pageTitle">
+  <h1>{{ isEdit ? 'EDIT' : 'ADD' }} JOURNAL ENTRY</h1>
+</section>
+
+<section class="journal-container">
+
+  <form (ngSubmit)="submitEntry()">
+
+    <input
+      type="text"
+      [(ngModel)]="title"
+      name="title"
+      placeholder="Title"
+    >
+
+    <textarea
+      [(ngModel)]="content"
+      name="content"
+      required
+    ></textarea>
+
+    <h2>Select Checkins for Entry</h2>
+
+    <ul>
+
+        <li *ngFor="let c of linkedCheckins">
+  <input
+    type="checkbox"
+    [checked]="selectedCheckins.includes(c.id!)"
+    (change)="toggleCheckin(c.id!, $event)"
+    >
+    {{ c.habit.title }} - {{ c.note }}
+        </li>
+
+  <li *ngFor="let c of checkins">
+      <input
+      type="checkbox"
+      (change)="toggleCheckin(c.id!, $event)"
+      >
+      {{ c.habit.title }} - {{ c.status }}: {{ c.note }}
+  </li>
+      
+    </ul>
+
+    <button type="button" class="button" (click)="goBack()">
+      Cancel
+    </button>
+
+    <button class="button" type="submit">
+      Save
+    </button>
+
+  </form>
+
+</section>

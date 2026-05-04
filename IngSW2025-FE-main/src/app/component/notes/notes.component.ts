@@ -31,6 +31,7 @@ export class NotesComponent implements OnInit {
       const grouped: { [date: string]: Checkin[] } = {};
       filtered.forEach(checkin => {
         const d = checkin.date.split('T')[0]; // YYYY-MM-DD
+        if (!d) return;
         if (!grouped[d]) grouped[d] = [];
         grouped[d].push(checkin);
       });

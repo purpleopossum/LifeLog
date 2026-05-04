@@ -3,150 +3,154 @@
   (dateChanged)="onDateChanged($event)">
 </app-day-carousel>
 
-<div  class="filter-section">
+<!-- FILTRI -->
+<div class="filter-section">
+
   <div class="habit-filter-buttons">
     <button [class.active]="selectedFilter === 'All'" (click)="onFilterChanged('All')">
-      <img src="all.png" alt="filter-all" style="height:20px; width:20px;">
+        <img src="all.png" alt="filter-all" style="height:20px; width:20px;">
     </button>
+
     <button [class.active]="selectedFilter === 'Morning'" (click)="onFilterChanged('Morning')">
-      <img src="filter-morning.png" alt="filter-morning" style="height:20px; width:20px;">
+      <img src="filter-morning.png" alt="morning" style="height:20px; width:20px;">
     </button>
+
     <button [class.active]="selectedFilter === 'Evening'" (click)="onFilterChanged('Evening')">
-      <img src="filter-evening.png" alt="filter-evening" style="height:20px; width:20px;">
+      <img src="filter-evening.png" alt="evening" style="height:20px; width:20px;">
     </button>
+
     <button [class.active]="selectedFilter === 'Night'" (click)="onFilterChanged('Night')">
-      <img src="filter-night.png" alt="filter-night" style="height:20px; width:20px;">
+      <img src="filter-night.png" alt="night" style="height:20px; width:20px;">
     </button>
   </div>
+
   <div class="filter-title">
-    <h2 *ngIf="selectedFilter === 'All'">All</h2>
-    <h2 *ngIf="selectedFilter !== 'All'">{{ selectedFilter }}</h2>
+    <h2>Filter: {{ selectedFilter }}</h2>
+    <span>•</span>
+    <h2>Status: {{ selectedStatus }}</h2>
   </div>
-  
+
   <div class="habit-filter-buttons">
     <button [class.active]="selectedStatus === 'All'" (click)="onStatusChanged('All')">All</button>
     <button [class.active]="selectedStatus === 'COMPLETED'" (click)="onStatusChanged('COMPLETED')">Completed</button>
     <button [class.active]="selectedStatus === 'SKIPPED'" (click)="onStatusChanged('SKIPPED')">Skipped</button>
   </div>
+
 </div>
 
+<!-- HABITS LIST -->
 <div class="habit-card-container">
+
   <div class="habit-card" *ngFor="let habit of filteredHabits">
-    <ng-container *ngIf="getCheckinForHabitAndDate(habit.id!, selectedDate) as checkin; else showHabit">
-      <ng-container *ngIf="checkin.status !== 'ACTIVE'; else showHabit">
-        <ng-container *ngIf="editingCheckinId === checkin.id; else viewMode">
-          <textarea [(ngModel)]="checkin.note" placeholder="Aggiungi una nota..." class="note" maxlength="140"></textarea>
-          <div class="mood">
-            <img src="crying.png" style="height:25px; width:25px;">
-            <img src="sad.png" style="height:25px; width:25px;">
-            <img src="neutral.png" style="height:25px; width:25px;">
-            <img src="happy.png" style="height:25px; width:25px;">
-            <img src="laughing.png" style="height:25px; width:25px;">
-          </div>
-            <input type="range" value="3" min="1" max="5" [(ngModel)]="checkin.mood" class="slider"/>  
-          <div class="actions">
-            <button type="button" (click)="editingCheckinId = null; loadHabitsForDate(this.selectedDate)">Cancel</button>
-            <button type="button" (click)="saveCheckinEdit(checkin)">Save</button>
-          </div>
-        </ng-container>
-        <ng-template #viewMode>
-          <div class="title-section" [class.completed-title]="checkin.status === 'COMPLETED'"
-              [class.skipped-title]="checkin.status === 'SKIPPED'">
-            <img class="time" [src]="habit.partOfDay + '.png'" alt="{{ habit.partOfDay }}">   
-            <h3>{{ habit.title }}</h3>   
-            <img (click)="openEditDialog(habit)" class="edit" src="Edit.png" alt="menu">   
-          </div>
-          <p class="description">{{ habit.description || 'No description' }}</p>
-          <div class="actions">
-            <button type="button" style="background-color: rgb(208, 142, 0);" (click)="deleteItem(checkin.id!)">          
-              <img src="go-back.png" alt="go back" style="height:30px; width:30px;">
-            </button>
-            <button type="button" style="background-color: purple;" (click)="editingCheckinId = checkin.id!">          
-              <img src="note.png" alt="add note" style="height:30px; width:30px;">
-            </button>
-          </div>
-        </ng-template>
+
+    <!-- CHECKIN ESISTENTE -->
+    <ng-container *ngIf="getCheckinForHabitAndDate(habit.id!, selectedDate) as checkin; else noCheckin">
+
+      <!-- EDIT MODE -->
+      <ng-container *ngIf="editingCheckinId === checkin.id; else viewMode">
+
+        <textarea
+          [(ngModel)]="checkin.note"
+          placeholder="Aggiungi una nota..."
+          class="note"
+          maxlength="140">
+        </textarea>
+
+        <div class="mood">
+          <img src="crying.png">
+          <img src="sad.png">
+          <img src="neutral.png">
+          <img src="happy.png">
+          <img src="laughing.png">
+        </div>
+
+        <input
+          type="range"
+          min="1"
+          max="5"
+          [(ngModel)]="checkin.mood"
+          class="slider">
+
+        <div class="actions">
+          <button type="button" (click)="editingCheckinId = null">
+            Cancel
+          </button>
+
+          <button type="button" (click)="saveCheckinEdit(checkin)">
+            Save
+          </button>
+        </div>
+
       </ng-container>
+
+      <!-- VIEW MODE -->
+      <ng-template #viewMode>
+
+        <div class="title-section"
+          [class.completed-title]="checkin.status === 'COMPLETED'"
+          [class.skipped-title]="checkin.status === 'SKIPPED'">
+
+          <img class="time" [src]="habit.partOfDay + '.png'">
+
+          <h3>{{ habit.title }}</h3>
+
+          <img class="edit" src="Edit.png" (click)="openEditDialog(habit)">
+        </div>
+
+        <p class="description">
+          {{ habit.description || 'No description' }}
+        </p>
+
+        <div class="actions">
+
+          <button type="button" (click)="deleteItem(checkin.id!)">
+            🗑
+          </button>
+
+          <button type="button" (click)="editingCheckinId = checkin.id!">
+            ✏️
+          </button>
+
+        </div>
+
+      </ng-template>
+
     </ng-container>
-    <ng-template #showHabit>
+
+    <!-- NO CHECKIN -->
+    <ng-template #noCheckin>
+
       <div class="title-section">
-        <img class="time" [src]="habit.partOfDay + '.png'" alt="{{ habit.partOfDay }}">   
+        <img class="time" [src]="habit.partOfDay + '.png'">
+
         <h3>{{ habit.title }}</h3>
-        <img (click)="openEditDialog(habit)" class="edit" src="Edit.png" alt="menu">    
+
+        <img class="edit" src="Edit.png" (click)="openEditDialog(habit)">
       </div>
-      <p class="description">{{ habit.description || 'No description' }}</p>
+
+      <p class="description">
+        {{ habit.description || 'No description' }}
+      </p>
+
       <div class="actions">
+
         <button type="button" (click)="updateCheckin(habit, 'SKIPPED')">
-          <img src="skip.png" alt="skip" style="height:30px; width:30px;">
+          ⏭
         </button>
+
         <button type="button" (click)="updateCheckin(habit, 'COMPLETED')">
-          <img src="checkmark.png" alt="complete" style="height:35px; width:35px;">
+          ✔
         </button>
-      </div> 
+
+      </div>
+
     </ng-template>
+
   </div>
+
 </div>
 
-<div class="filter-section">
-  <div class="filter-title">
-    <h2 *ngIf="selectedFilter !== 'All'">Any time of day</h2>
-  </div>
-</div>
-
-<div class="habit-card-container">
-  <div class="habit-card" *ngFor="let habit of filteredHabitsAny">
-    <ng-container *ngIf="getCheckinForHabitAndDate(habit.id!, selectedDate) as checkin; else showHabit">
-      <ng-container *ngIf="checkin.status !== 'ACTIVE'; else showHabit">
-        <ng-container *ngIf="editingCheckinId === checkin.id; else viewMode">
-          <textarea [(ngModel)]="checkin.note" placeholder="Aggiungi una nota..." class="note" maxlength="140"></textarea>
-          <div class="mood">
-            <img src="crying.png" style="height:25px; width:25px;">
-            <img src="sad.png" style="height:25px; width:25px;">
-            <img src="neutral.png" style="height:25px; width:25px;">
-            <img src="happy.png" style="height:25px; width:25px;">
-            <img src="laughing.png" style="height:25px; width:25px;">
-          </div>
-            <input type="range" value="3" min="1" max="5" [(ngModel)]="checkin.mood" class="slider"/>  
-          <div class="actions">
-            <button type="button" (click)="editingCheckinId = null; loadHabitsForDate(this.selectedDate)">Cancel</button>
-            <button type="button" (click)="saveCheckinEdit(checkin)">Save</button>
-          </div>
-        </ng-container>
-        <ng-template #viewMode>
-          <div class="title-section" [class.completed-title]="checkin.status === 'COMPLETED'"
-              [class.skipped-title]="checkin.status === 'SKIPPED'">
-            <img class="time" [src]="habit.partOfDay + '.png'" alt="{{ habit.partOfDay }}">   
-            <h3>{{ habit.title }}</h3>   
-            <img (click)="openEditDialog(habit)" class="edit" src="Edit.png" alt="menu">   
-          </div>
-          <p class="description">{{ habit.description || 'No description' }}</p>
-          <div class="actions">
-            <button type="button" style="background-color: rgb(208, 142, 0);" (click)="deleteItem(checkin.id!)">          
-              <img src="go-back.png" alt="go back" style="height:30px; width:30px;">
-            </button>
-            <button type="button" style="background-color: purple;" (click)="editingCheckinId = checkin.id!">          
-              <img src="note.png" alt="add note" style="height:30px; width:30px;">
-            </button>
-          </div>
-        </ng-template>
-      </ng-container>
-    </ng-container>
-    <ng-template #showHabit>
-      <div class="title-section">
-        <img class="time" [src]="habit.partOfDay + '.png'" alt="{{ habit.partOfDay }}">   
-        <h3>{{ habit.title }}</h3>
-        <img (click)="openEditDialog(habit)" class="edit" src="Edit.png" alt="menu">    
-      </div>
-      <p class="description">{{ habit.description || 'No description' }}</p>
-      <div class="actions">
-        <button type="button" (click)="updateCheckin(habit, 'SKIPPED')">
-          <img src="skip.png" alt="skip" style="height:30px; width:30px;">
-        </button>
-        <button type="button" (click)="updateCheckin(habit, 'COMPLETED')">
-          <img src="checkmark.png" alt="complete" style="height:35px; width:35px;">
-        </button>
-      </div> 
-    </ng-template>
-  </div>
-</div>
-<button class="add-habit" (click)="openDialog()">Add Habit</button>
+<!-- ADD BUTTON -->
+<button class="add-habit" (click)="openDialog()">
+  Add Habit
+</button>

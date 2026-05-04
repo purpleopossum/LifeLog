@@ -1,6 +1,6 @@
 
 export class Habit {
-  id: string|undefined;
+  id?: string;
   userId!: string;
   title!: string;
   description!: string;
