@@ -1,10 +1,11 @@
 import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChild,
-  ElementRef,
-  ChangeDetectorRef
+    Component,
+    OnInit,
+    AfterViewInit,
+    OnDestroy,
+    ViewChild,
+    ElementRef,
+    ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +20,7 @@ import { Chart } from 'chart.js/auto';
   templateUrl: './stats.component.html',
   styleUrls: ['./stats.component.scss']
 })
-export class StatsComponent implements OnInit, AfterViewInit {
+export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   stats!: Stats;
   partnerCode: string = '';
@@ -113,7 +114,7 @@ export class StatsComponent implements OnInit, AfterViewInit {
                   }]
               }
           });
-          this.partnerLineChartInstance = new Chart(this.lineChart.nativeElement, {
+          this.partnerLineChartInstance = new Chart(this.partnerLineChart.nativeElement, {
               type: 'line',
               data: {
                   labels: this.getLast7Days(),
@@ -126,6 +127,29 @@ export class StatsComponent implements OnInit, AfterViewInit {
               }
           });
 
+      }
+  }
+
+  ngOnDestroy(): void {
+      try {
+          this.donutChartInstance?.destroy();
+      } catch (e) {
+          console.warn('Error destroying donutChartInstance', e);
+      }
+      try {
+          this.lineChartInstance?.destroy();
+      } catch (e) {
+          console.warn('Error destroying lineChartInstance', e);
+      }
+      try {
+          this.partnerDonutChartInstance?.destroy();
+      } catch (e) {
+          console.warn('Error destroying partnerDonutChartInstance', e);
+      }
+      try {
+          this.partnerLineChartInstance?.destroy();
+      } catch (e) {
+          console.warn('Error destroying partnerLineChartInstance', e);
       }
   }
 

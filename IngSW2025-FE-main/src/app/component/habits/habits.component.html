@@ -26,7 +26,6 @@
 
   <div class="filter-title">
     <h2>Filter: {{ selectedFilter }}</h2>
-    <span>•</span>
     <h2>Status: {{ selectedStatus }}</h2>
   </div>
 
@@ -104,11 +103,12 @@
         <div class="actions">
 
           <button type="button" (click)="deleteItem(checkin.id!)">
-            🗑
+            <img class="time" src="go-back.png">
+
           </button>
 
-          <button type="button" (click)="editingCheckinId = checkin.id!">
-            ✏️
+          <button type="button" (click)="editingCheckinId = checkin.id!">            
+            <img class="time" src="note.png">
           </button>
 
         </div>
@@ -135,11 +135,12 @@
       <div class="actions">
 
         <button type="button" (click)="updateCheckin(habit, 'SKIPPED')">
-          ⏭
+          <img class="time" src="skip.png">
+
         </button>
 
         <button type="button" (click)="updateCheckin(habit, 'COMPLETED')">
-          ✔
+          <img class="time" src="checkmark.png">
         </button>
 
       </div>

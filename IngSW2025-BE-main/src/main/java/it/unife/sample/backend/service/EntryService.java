@@ -5,6 +5,7 @@ import it.unife.sample.backend.repository.EntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class EntryService {
         return repository.findByUserId(userId);
     }
     
-    public List<Entry> findByEntryDate(String entryDate) {
+    public List<Entry> findByEntryDate(LocalDate entryDate) {
         return repository.findByEntryDate(entryDate);
     }
 
