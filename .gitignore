@@ -14,7 +14,6 @@ yarn-error.log*
 node_modules/
 .gradle/
 build/
-IngSW2025-FE-main/.angular/cache/
 dist/
 IngSW2025-FE-main/.angular/
 *.class
