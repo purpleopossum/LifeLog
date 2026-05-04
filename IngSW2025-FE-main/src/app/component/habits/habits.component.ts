@@ -30,7 +30,7 @@ import { HabitUpdateDTO } from '../../dto/habit.model';
   styleUrl: './habits.component.scss'
 })
 export class HabitsComponent implements OnInit {
-  selectedDate: string = new Date().toISOString().split('T')[0] ?? '';
+  selectedDate: string = this.formatDate(new Date());
   habits: Habit[] = [];
   checkins: Checkin[] = [];
   editingCheckinId: string | null = null;
@@ -116,38 +116,52 @@ export class HabitsComponent implements OnInit {
   }
 
   async updateCheckin(habit: Habit, status: string) {
-    let checkin = this.getCheckinForHabitAndDate(habit.id!, this.selectedDate);
+    try {
+      let checkin = this.getCheckinForHabitAndDate(habit.id!, this.selectedDate);
 
-    if (!checkin) {
-      checkin = {
-        status: status,
-        note: '',
-        mood: 0
-      } as Checkin;
-      await lastValueFrom(this.checkinService.create(habit.id!, checkin));
-    } else {
-      checkin.status = status;
-      await lastValueFrom(this.checkinService.update(checkin.id!, {
-        status: status,
-        note: checkin.note ?? '',
-        mood: checkin.mood ?? 0
-      }));
+      if (!checkin) {
+        checkin = {
+          status: status,
+          note: '',
+          mood: 0,
+          date: this.selectedDate
+        } as Checkin;
+        await lastValueFrom(this.checkinService.create(habit.id!, checkin));
+      } else {
+        checkin.status = status;
+        await lastValueFrom(this.checkinService.update(checkin.id!, {
+          status: status,
+          note: checkin.note ?? '',
+          mood: checkin.mood ?? 0
+        }));
+      }
+      await this.loadData();
+    } catch (error) {
+      console.error('Error updating checkin:', error);
+      alert('Errore nell\'aggiornamento dell\'abitudine');
     }
-    await this.loadData();
   }
   
   async saveCheckinEdit(checkin: Checkin) {
     await lastValueFrom(this.checkinService.update(checkin.id!, { 
-                                                  status: checkin.status,
-                                                  note: checkin.note ?? '',
-                                                  mood:checkin.mood ?? 0
-                                                    }));
+      status: checkin.status,
+      note: checkin.note ?? '',
+      mood:checkin.mood ?? 0
+    }));
     this.editingCheckinId = null;
     await this.loadData();
   }
   async deleteItem(id: string): Promise<void> {
+    this.editingCheckinId = null;
     await lastValueFrom(this.checkinService.delete(id));
     await this.loadData();
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }
 

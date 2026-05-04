@@ -3,6 +3,7 @@ package it.unife.sample.backend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -28,6 +29,6 @@ public class Entry {
 
     private String title;
     private String content;
-    private String entryDate;
+    private LocalDate entryDate;
     private boolean deleted;
 }
