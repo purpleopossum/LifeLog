@@ -1,8 +1,8 @@
 package it.unife.sample.backend.controller;
 
-import it.unife.sample.backend.model.Habit;
+import it.unife.sample.backend.model.Entry;
 import it.unife.sample.backend.model.User;
-import it.unife.sample.backend.service.HabitService;
+import it.unife.sample.backend.service.EntryService;
 import it.unife.sample.backend.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,33 +14,38 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/habits")
-public class HabitController {
+@RequestMapping("/api/entries")
+public class EntryController {
 
     @Autowired
-    private HabitService service;
+    private EntryService service;
     
     @Autowired
     private UserService userService;
 
     @GetMapping
-    public List<Habit> getAll() {
+    public List<Entry> getAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Habit> getById(@PathVariable UUID id) {
-        Optional<Habit> entity = service.findById(id);
+    public ResponseEntity<Entry> getById(@PathVariable UUID id) {
+        Optional<Entry> entity = service.findById(id);
         return entity.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     
     @GetMapping("/user/{userId}")
-        public List<Habit> getByUserId(@PathVariable UUID userId) {
+        public List<Entry> getByUserId(@PathVariable UUID userId) {
         return service.findByUserId(userId);
+    }
+    
+    @GetMapping("/date/{entryDate}")
+    public List<Entry> getByEntryDate(@PathVariable String entryDate) {
+        return service.findByEntryDate(entryDate);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Habit entity, @RequestParam String userId) {
+    public ResponseEntity<?> create(@RequestBody Entry entity, @RequestParam String userId) {
         try {
             UUID userUUID = UUID.fromString(userId);
             Optional<User> userOpt = userService.findById(userUUID);
@@ -48,19 +53,15 @@ public class HabitController {
                 return ResponseEntity.badRequest().body("User not found");
             }
             entity.setUser(userOpt.get());
-            if (entity.getDescription() == null) entity.setDescription("");
-            if (entity.getPartOfDay() == null) entity.setPartOfDay("");
             entity.setDeleted(false);
-
             return ResponseEntity.ok(service.save(entity));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid userId format");
         }
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity<Habit> update(@PathVariable UUID id, @RequestBody Habit entity) {
+    public ResponseEntity<Entry> update(@PathVariable UUID id, @RequestBody Entry entity) {
         if (!service.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }

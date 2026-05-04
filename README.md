@@ -3,7 +3,7 @@
 Repo per LifeLog, un tracker delle abitudini.
 - Crea Habits, effettua checkin giornaliere, aggiungi note e mood
 - Aggiungi Entry e collega i rispettivi checkin
-- Visualizza statistiche, aggiunig un amico e visualizza le sue statistiche
+- Visualizza statistiche, aggiungi un amico e visualizza le sue statistiche
 
 ## Prerequisiti
 - Git

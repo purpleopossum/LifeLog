@@ -1,11 +1,9 @@
 package it.unife.sample.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -15,9 +13,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
     private String username;
     private String email;
     private String password;
     
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Habit> habits;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Entry> entries;
 }

@@ -1,7 +1,9 @@
 package it.unife.sample.backend.controller;
 
 import it.unife.sample.backend.model.Checkin;
+import it.unife.sample.backend.model.Habit;
 import it.unife.sample.backend.service.CheckinService;
+import it.unife.sample.backend.service.HabitService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,9 @@ public class CheckinController {
 
     @Autowired
     private CheckinService service;
+    
+    @Autowired
+    private HabitService habitService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Checkin> getById(@PathVariable UUID id) {
@@ -61,19 +66,28 @@ public class CheckinController {
         return service.findByHabit(habitId);
     }
 
-    @GetMapping("user/{userId}/date/{date}")
+    @GetMapping("/user/{userId}/date/{date}")
     public List<Checkin> getByUserAndDate(
             @PathVariable String userId,
             @PathVariable String date) {
-        // Converti userId e date nei tipi corretti
         UUID userUUID = UUID.fromString(userId);
         LocalDate localDate = LocalDate.parse(date);
         return service.findByHabitUserIdAndDate(userUUID, localDate);
     }
     
     @PostMapping
-    public Checkin create(@RequestBody Checkin checkin) {
-        return service.save(checkin);
+    public ResponseEntity<?> create(@RequestBody Checkin checkin, @RequestParam String habitId) {
+        try {
+            UUID habitUUID = UUID.fromString(habitId);
+            Optional<Habit> habitOpt = habitService.findById(habitUUID);
+            if (habitOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body("Habit not found");
+            }
+            checkin.setHabit(habitOpt.get());
+            return ResponseEntity.ok(service.save(checkin));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid habitId format");
+        }
     }
 
     @DeleteMapping("/{id}")
