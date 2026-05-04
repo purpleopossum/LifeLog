@@ -1,0 +1,33 @@
+.stats-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.stats-card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  width: 500px;
+  text-align: center;
+}
+
+.progress-container {
+  width: 100%;
+  background: #eee;
+  border-radius: 20px;
+}
+
+.progress-bar {
+  background: #0094fd;
+  color: white;
+  padding: 5px;
+  border-radius: 20px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}

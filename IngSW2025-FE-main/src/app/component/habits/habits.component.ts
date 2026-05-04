@@ -46,7 +46,7 @@ export class HabitsComponent implements OnInit {
 
 
   async ngOnInit() {
-    await this.loadHabitsForDate(this.selectedDate);
+    await this.loadData();
   }
 
   onFilterChanged(filter: string) {
@@ -59,21 +59,24 @@ export class HabitsComponent implements OnInit {
     this.applyFilters();
   }
 
-  async loadHabitsForDate(date: string) {
+  async loadData() {
     const user = JSON.parse(localStorage.getItem('user')!);
+
     this.habits = await lastValueFrom(this.habitService.getByUserId(user.id));
-    this.checkins = await lastValueFrom(this.checkinService.getByUserAndDate(user.id, date));
+    this.checkins = await lastValueFrom(this.checkinService.getByUser(user.id));
+
     this.applyFilters();
   }
 
   applyFilters() {
     this.filteredHabits = this.habits.filter(habit => {
-      const matchesPartOfDay = this.selectedFilter === 'All' || habit.partOfDay === this.selectedFilter;
+      const matchesPartOfDay = 
+          this.selectedFilter === 'All' || habit.partOfDay === this.selectedFilter;
       
       const checkin = this.getCheckinForHabitAndDate(habit.id!, this.selectedDate);
       const matchesStatus = 
         this.selectedStatus === 'All' ||
-        (checkin && checkin.status === this.selectedStatus.toUpperCase()); // Assumendo status 'COMPLETED' o 'SKIPPED'
+        (checkin && checkin.status === this.selectedStatus); // Assumendo status 'COMPLETED' o 'SKIPPED'
 
       return matchesPartOfDay && matchesStatus;
     });
@@ -82,7 +85,7 @@ export class HabitsComponent implements OnInit {
 
   async onDateChanged(newDate: string) {
     this.selectedDate = newDate;
-    await this.loadHabitsForDate(newDate);
+    this.applyFilters();
   }
 
   getCheckinForHabitAndDate(habitId: string, date: string) {
@@ -94,7 +97,7 @@ export class HabitsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(_result => {
       console.log('The dialog was closed');
-      this.loadHabitsForDate(this.selectedDate).then(() => {
+      this.loadData().then(() => {
         console.log('Habits reloaded');
       });
     });
@@ -105,7 +108,7 @@ export class HabitsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(_result => {
-      this.loadHabitsForDate(this.selectedDate).then(() => {
+      this.loadData().then(() => {
         console.log('Habits reloaded');
       });
     });
@@ -128,17 +131,17 @@ export class HabitsComponent implements OnInit {
       checkin.status = status;
       await lastValueFrom(this.checkinService.update(checkin.id!, checkin));
     }
-    await this.loadHabitsForDate(this.selectedDate);
+    await this.loadData();
   }
   
   async saveCheckinEdit(checkin: Checkin) {
     await lastValueFrom(this.checkinService.update(checkin.id!, checkin));
     this.editingCheckinId = null;
-    await this.loadHabitsForDate(this.selectedDate);
+    await this.loadData();
   }
   async deleteItem(id: string): Promise<void> {
     await lastValueFrom(this.checkinService.delete(id));
-    await this.loadHabitsForDate(this.selectedDate);
+    await this.loadData();
   }
 }
 

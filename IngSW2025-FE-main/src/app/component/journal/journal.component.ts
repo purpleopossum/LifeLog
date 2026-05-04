@@ -18,7 +18,7 @@ export class JournalComponent implements OnInit {
         private entryService: EntryService
     ) {}
     loadJournal() {
-        // TODO: get real user data
+        // TODO: add API to get real user data
         const user = JSON.parse(localStorage.getItem('user')!);
 
         this.entryService.getByUser(user.id)

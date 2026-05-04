@@ -7,15 +7,19 @@ import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { NotesComponent } from './component/notes/notes.component';
 import { JournalComponent } from './component/journal/journal.component';
+import { StatsComponent } from './component/stats/stats.component';
 
 
 export const routes: Routes = [
   { path: '', component: HomePageComponent },
-  { path: 'habits', component: HabitsComponent, canActivate: [AuthGuard] },
+  { path: 'habit', component: HabitsComponent, canActivate: [AuthGuard] },
   { path: 'notes', component: NotesComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [NoAuthGuard] },
-  { path: 'journal', component: JournalComponent, canActivate: [NoAuthGuard] }
+  { path: 'journal', component: JournalComponent, canActivate: [AuthGuard] },
+  { path: 'stats', component: StatsComponent, canActivate: [AuthGuard] },
+
+  { path: '**', component: HabitsComponent, canActivate: [AuthGuard] }
 ];
 
 
