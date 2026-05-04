@@ -1,11 +1,8 @@
 package it.unife.sample.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
-
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -15,7 +12,14 @@ public class Habit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private UUID userId;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;    
+
+    @OneToMany(mappedBy = "habit")
+    private List<Checkin> checkins;
+
     private String title;    
     private String description;
     private String partOfDay;
