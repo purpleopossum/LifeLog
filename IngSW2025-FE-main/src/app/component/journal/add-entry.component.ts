@@ -57,18 +57,23 @@ export class DialogAddEntry {
   }
 
   submitEntry() {
-    const user = JSON.parse(localStorage.getItem('user')!);
+      const user = JSON.parse(localStorage.getItem('user')!);
 
-    const payload = {
-      userId: user.id,
-      title: this.title,
-      content: this.content,
-      checkinIds: this.selectedCheckins
-    };
+      const selectedCheckinsObjects = this.checkins.filter(c => 
+        this.selectedCheckins.includes(c.id!)
+      );
 
-    console.log('SUBMIT:', payload);
+      const entry = {
+        title: this.title,
+        content: this.content,
+        entryDate: new Date().toISOString().split('T')[0],
+        linkedCheckins: selectedCheckinsObjects
+      };
 
-    this.dialogRef.close(payload);
+      this.dialogRef.close({
+        entry,
+        userId: user.id
+      });
   }
 
   goBack() {

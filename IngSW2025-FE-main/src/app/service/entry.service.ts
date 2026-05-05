@@ -16,9 +16,12 @@ export class EntryService {
     return this.http.get<Entry[]>(`${this.baseUrl}/user/${userId}`);
   }
 
-  create(entry: Entry): Observable<any> {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    return this.http.post<Entry>(`${this.baseUrl}?userId=${user.id}`, entry);
+  create(entry: any, userId: string): Observable<any> {
+    return this.http.post<Entry>(`${this.baseUrl}?userId=${userId}`, entry);
+  }
+
+  update(id: string, entry: any): Observable<Entry> {
+    return this.http.put<Entry>(`${this.baseUrl}/${id}`, entry);
   }
 
   delete(id: string): Observable<any> {

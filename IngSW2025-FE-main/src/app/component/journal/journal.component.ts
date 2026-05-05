@@ -4,6 +4,7 @@ import { Entry } from '../../dto/journal.model';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddEntry } from './add-entry.component';
 import { EntryService } from '../../service/entry.service';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-journal',
@@ -18,7 +19,6 @@ export class JournalComponent implements OnInit {
         private entryService: EntryService
     ) {}
     loadJournal() {
-        // TODO: add API to get real user data
         const user = JSON.parse(localStorage.getItem('user')!);
 
         this.entryService.getByUser(user.id)
@@ -49,24 +49,57 @@ export class JournalComponent implements OnInit {
 
     deleteEntry(id: string) {
         if (confirm('Delete this journal entry?')) {
-            console.log('delete', id);
-            // chiama API
+            this.entryService.delete(id).subscribe(() => {
+                this.loadJournal();
+            })
         }
     }
 
-    editEntry(id: string) {
-        console.log('edit', id);
-        // router.navigate(...)
+    editEntry(entry: Entry) {
+        const dialogRef = this.dialog.open(DialogAddEntry, {
+            data: {
+                isEdit: true,
+                entry: entry,
+                checkins: [],
+                linkedCheckins: entry.linkedCheckins || []
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(async result => {
+            if (result) {
+                await lastValueFrom(
+                    this.entryService.update(entry.id!, {
+                        title: result.title,
+                        content: result.content
+                    })
+                );
+
+                this.loadJournal();
+            }
+        });
     }
 
     addEntry() {
-        const dialogRef = this.dialog.open(DialogAddEntry);
+        const dialogRef = this.dialog.open(DialogAddEntry, {
+            data: {
+                isEdit: false,
+                checkins: [],
+                linkedCheckins: []
+            }
+        });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe(async result => {
             if (result) {
+                await lastValueFrom(
+                    this.entryService.create({
+                        title: result.title,
+                        content: result.content
+                    }, result.userId)
+                );
+
                 this.loadJournal();
             }
-        })
+        });
     }
 
     getMonthYear(date: string): string {
