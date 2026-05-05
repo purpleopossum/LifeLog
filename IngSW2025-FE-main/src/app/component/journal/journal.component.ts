@@ -69,8 +69,9 @@ export class JournalComponent implements OnInit {
             if (result) {
                 await lastValueFrom(
                     this.entryService.update(entry.id!, {
-                        title: result.title,
-                        content: result.content
+                        ...entry,
+                        title: result.entry.title,
+                        content: result.entry.content
                     })
                 );
 
@@ -92,8 +93,8 @@ export class JournalComponent implements OnInit {
             if (result) {
                 await lastValueFrom(
                     this.entryService.create({
-                        title: result.title,
-                        content: result.content
+                        title: result.entry.title,
+                        content: result.entry.content
                     }, result.userId)
                 );
 

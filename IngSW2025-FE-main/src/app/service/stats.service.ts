@@ -9,7 +9,7 @@ export class StatsService {
   constructor(private http: HttpClient) {}
 
   getStats(userId: string): Observable<Stats> {
-    return this.http.get<Stats>(`/api/stats/${userId}`);
+    return this.http.get<Stats>(`/api/stats/user/${userId}`);
   }
 
   unfriend(): Observable<void> {

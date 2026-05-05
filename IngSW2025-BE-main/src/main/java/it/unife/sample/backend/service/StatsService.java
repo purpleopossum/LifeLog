@@ -1,17 +1,18 @@
 package it.unife.sample.backend.service;
 
-import it.unife.sample.backend.model.Checkin;
-import it.unife.sample.backend.model.Stats;
-import it.unife.sample.backend.repository.CheckinRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import it.unife.sample.backend.model.Checkin;
+import it.unife.sample.backend.model.Stats;
+import it.unife.sample.backend.repository.CheckinRepository;
 
 @Service
 public class StatsService {
@@ -45,8 +46,79 @@ public class StatsService {
 		stats.setCurrentStreak(calculateCurrentStreak(uniqueDaysSet));
 		stats.setCompletedPercentageLast7Days(calculateLast7DaysStatusPercentage(checkins, true));
 		stats.setSkippedPercentageLast7Days(calculateLast7DaysStatusPercentage(checkins, false));
+		stats.setTotalWeekCompleted(countLast7Days(checkins, "completed"));
+		stats.setTotalWeekSkipped(countLast7Days(checkins, "skipped"));
+		stats.setTotalWeekCheckins(countLast7DaysAll(checkins));
+		stats.setCompletedLastSevenDays(getCompletedLast7Days(checkins));
 		return stats;
 	}
+
+	private int countLast7Days(List<Checkin> checkins, String statusFilter) {
+        LocalDate today = LocalDate.now();
+        LocalDate start = today.minusDays(6);
+
+        int count = 0;
+
+        for (Checkin checkin : checkins) {
+            LocalDate date = checkin.getDate();
+            if (date == null || date.isBefore(start) || date.isAfter(today)) continue;
+
+            String status = checkin.getStatus() == null ? "" : checkin.getStatus().toLowerCase();
+
+            if (statusFilter.equals("completed") &&
+                (status.equals("completed") || status.equals("done") || status.equals("success"))) {
+                count++;
+            }
+
+            if (statusFilter.equals("skipped") &&
+                (status.equals("skipped") || status.equals("skip"))) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+	private int countLast7DaysAll(List<Checkin> checkins) {
+    LocalDate today = LocalDate.now();
+    LocalDate start = today.minusDays(6);
+
+    int count = 0;
+
+    for (Checkin checkin : checkins) {
+        LocalDate date = checkin.getDate();
+        if (date == null || date.isBefore(start) || date.isAfter(today)) continue;
+
+        count++;
+    }
+
+    return count;
+}
+private List<Integer> getCompletedLast7Days(List<Checkin> checkins) {
+    LocalDate today = LocalDate.now();
+    List<Integer> result = new ArrayList<>();
+
+    for (int i = 6; i >= 0; i--) {
+        LocalDate day = today.minusDays(i);
+
+        int count = 0;
+
+        for (Checkin c : checkins) {
+            if (c.getDate() != null && c.getDate().equals(day)) {
+                String status = c.getStatus() == null ? "" : c.getStatus().toLowerCase();
+
+                if (status.equals("completed") ||
+                    status.equals("done") ||
+                    status.equals("success")) {
+                    count++;
+                }
+            }
+        }
+
+        result.add(count);
+    }
+
+    return result;
+}
 
 	private double calculateLast7DaysStatusPercentage(List<Checkin> checkins, boolean completed) {
 		LocalDate today = LocalDate.now();

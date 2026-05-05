@@ -1,24 +1,33 @@
 export interface PartnerStats {
   name: string;
+
   totalHabits: number;
+
   totalWeekCompleted: number;
   totalWeekSkipped: number;
+  totalWeekCheckins: number;
+
   longestStreak: number;
   currentStreak: number;
-  completedPercentage: number;
+
   completedLastSevenDays: number[];
+  completedPercentageLast7Days: number;
+  skippedPercentageLast7Days: number;
 }
 
 export interface Stats {
-  totalHabits: number;
+  totalCheckins: number;
+  daysWithCheckin: number;
   longestStreak: number;
   currentStreak: number;
-  completed: number;
-  skipped: number;
+
   totalWeekCompleted: number;
   totalWeekSkipped: number;
-  completedPercentage: number;
+  totalWeekCheckins: number;
+
   completedLastSevenDays: number[];
+  completedPercentageLast7Days: number;
+  skippedPercentageLast7Days: number;
 
   partner: PartnerStats | undefined;
 }

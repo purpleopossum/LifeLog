@@ -3,7 +3,8 @@ import {
   OnInit,
   AfterViewInit,
   ViewChild,
-  ElementRef
+  ElementRef,
+  ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,79 +23,110 @@ export class StatsComponent implements OnInit, AfterViewInit {
 
   stats!: Stats;
   partnerCode: string = '';
+  lineChartInstance?: Chart;
+  donutChartInstance?: Chart;
+  partnerDonutChartInstance?: Chart;
+  partnerLineChartInstance?: Chart;
 
   @ViewChild('donutChart') donutChart!: ElementRef;
   @ViewChild('lineChart') lineChart!: ElementRef;
   @ViewChild('partnerDonutChart') partnerDonutChart!: ElementRef;
   @ViewChild('partnerLineChart') partnerLineChart!: ElementRef;
 
-  constructor(private statsService: StatsService) {}
+  constructor(
+      private statsService: StatsService,
+      private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    const user = JSON.parse(localStorage.getItem('user')!);
+      const user = JSON.parse(localStorage.getItem('user')!);
 
-    this.statsService.getStats(user.id).subscribe(data => {
-      this.stats = data;
-      setTimeout(() => this.buildCharts());
-    });
+      this.statsService.getStats(user.id).subscribe(data => {
+          this.stats = data;
+          this.cd.detectChanges();
+          setTimeout(() => {
+              this.buildCharts();
+          })
+      });
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit() {}
 
   buildCharts() {
-    if (!this.stats) return;
-
-    new Chart(this.donutChart.nativeElement, {
-      type: 'doughnut',
-      data: {
-        labels: ['Completed', 'Skipped', 'To-do'],
-        datasets: [{
-          data: [
-            this.stats.totalWeekCompleted,
-            this.stats.totalWeekSkipped,
-            this.stats.totalHabits * 7 -
-            (this.stats.totalWeekCompleted + this.stats.totalWeekSkipped)
-          ]
-        }]
+      if (!this.stats || !this.donutChart || !this.lineChart) {
+          console.log("DOM not ready yet");
+          return;
       }
-    });
 
-    new Chart(this.lineChart.nativeElement, {
-      type: 'line',
-      data: {
-        labels: this.getLast7Days(),
-        datasets: [{
-          data: this.stats.completedLastSevenDays
-        }]
-      }
-    });
+      this.donutChartInstance?.destroy();
+      this.partnerDonutChartInstance?.destroy();
 
-    if (this.stats.partner) {
-      new Chart(this.partnerDonutChart.nativeElement, {
-        type: 'doughnut',
-        data: {
-          labels: ['Completed', 'Skipped', 'To-do'],
-          datasets: [{
-            data: [
-              this.stats.partner.totalWeekCompleted,
-              this.stats.partner.totalWeekSkipped,
-              this.stats.partner.totalHabits * 7 -
-              (this.stats.partner.totalWeekCompleted + this.stats.partner.totalWeekSkipped)
-            ]
-          }]
-        }
+      const canvas = this.donutChart.nativeElement;
+      const ctx = canvas.getContext('2d');
+
+      this.donutChartInstance = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+              labels: ['Completed', 'Skipped', 'To-do'],
+              datasets: [{
+                  data: [
+                      this.stats.totalWeekCompleted ?? 0,
+                      this.stats.totalWeekSkipped ?? 0,
+                      Math.max(0,
+                        (this.stats.totalWeekCheckins ?? 0)
+                        - ((this.stats.totalWeekCompleted ?? 0) + (this.stats.totalWeekSkipped ?? 0))
+                        )
+                  ]
+              }]
+          }
+      });
+      this.lineChartInstance = new Chart(this.lineChart.nativeElement, {
+          type: 'line',
+          data: {
+              labels: this.getLast7Days(),
+              datasets: [{
+                  label: 'Completed',
+                  data: this.stats.completedLastSevenDays ?? [],
+                  borderColor: '#0094fd',
+                  tension: 0.3
+              }]
+          }
       });
 
-      new Chart(this.partnerLineChart.nativeElement, {
-        type: 'line',
-        data: {
-          labels: this.getLast7Days(),
-          datasets: [{
-            data: this.stats.partner.completedLastSevenDays
-          }]
-        }
-      });
-    }
+      
+
+      if (this.stats.partner && this.partnerDonutChart && this.partnerLineChart) {
+          this.partnerDonutChartInstance = new Chart(this.partnerDonutChart.nativeElement, {
+              type: 'doughnut',
+              data: {
+                  labels: ['Completed', 'Skipped', 'To-do'],
+                  datasets: [{
+                      data: [
+                          this.stats.partner.totalWeekCompleted,
+                          this.stats.partner.totalWeekSkipped,
+                          Math.max(0,
+                          (this.stats.partner.totalWeekCheckins ?? 0)
+                          - ((this.stats.partner.totalWeekCompleted ?? 0) + (this.stats.partner.totalWeekSkipped ?? 0))
+                            )
+
+                      ]
+                  }]
+              }
+          });
+          this.partnerLineChartInstance = new Chart(this.lineChart.nativeElement, {
+              type: 'line',
+              data: {
+                  labels: this.getLast7Days(),
+                  datasets: [{
+                      label: 'Completed',
+                      data: this.stats.partner.completedLastSevenDays ?? [],
+                      borderColor: '#0094fd',
+                      tension: 0.3
+                  }]
+              }
+          });
+
+      }
   }
 
   getLast7Days(): string[] {
@@ -116,8 +148,13 @@ export class StatsComponent implements OnInit, AfterViewInit {
   }
 
   addPartner() {
-    this.statsService.addPartner(this.partnerCode).subscribe(() => {
-      location.reload();
-    });
+      this.statsService.addPartner(this.partnerCode).subscribe(() => {
+          const user = JSON.parse(localStorage.getItem('user')!);
+          this.statsService.getStats(user.id).subscribe(data => {
+              this.stats = data;
+              this.cd.detectChanges();
+              this.buildCharts();
+          });
+      });
   }
 }

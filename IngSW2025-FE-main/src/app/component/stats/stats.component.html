@@ -2,12 +2,12 @@
 
   <!-- USER -->
   <div class="stats-card">
-    <h2>your productivity</h2>
+    <h2>Your Productivity</h2>
 
     <div class="progress-container">
       <div class="progress-bar"
-           [style.width.%]="stats.completedPercentage">
-        {{ stats.completedPercentage }}%
+           [style.width.%]="stats.completedPercentageLast7Days">
+        {{ stats.completedPercentageLast7Days.toFixed(2) }}%
       </div>
     </div>
 
@@ -38,8 +38,8 @@
 
     <div class="progress-container">
       <div class="progress-bar"
-           [style.width.%]="stats.partner.completedPercentage">
-        {{ stats.partner.completedPercentage }}%
+           [style.width.%]="stats.partner.completedPercentageLast7Days">
+        {{ stats.partner.completedPercentageLast7Days.toFixed(2) }}%
       </div>
     </div>
 
@@ -52,7 +52,9 @@
   <!-- ADD PARTNER -->
   <ng-template #addPartnerTemplate>
     <div class="stats-card">
-      <button (click)="addPartner()">Add Partner</button>
+        <h3>No partner yet</h3>
+        <input [(ngModel)]="partnerCode" placeholder="Enter partner code" />
+        <button (click)="addPartner()">Add Partner</button>
     </div>
   </ng-template>
 
