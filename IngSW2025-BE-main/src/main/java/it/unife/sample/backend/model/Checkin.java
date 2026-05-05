@@ -1,5 +1,6 @@
 package it.unife.sample.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class Checkin {
     private Habit habit;
 
     @ManyToMany(mappedBy = "checkins")
+    @JsonIgnore
     private Set<Entry> entries = new HashSet<>();
 
     private LocalDate date;

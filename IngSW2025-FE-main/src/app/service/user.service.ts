@@ -7,7 +7,7 @@ import { User } from '../dto/user.model';
 })
 export class UserService {
 
-  private apiUrl = '/api/user';
+  private apiUrl = '/api/users';
 
   constructor(private http: HttpClient) {}
 
