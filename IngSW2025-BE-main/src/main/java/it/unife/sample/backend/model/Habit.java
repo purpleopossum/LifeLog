@@ -5,6 +5,8 @@ import lombok.Data;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Data
 @Entity
 public class Habit {
@@ -18,6 +20,7 @@ public class Habit {
     private User user;    
 
     @OneToMany(mappedBy = "habit")
+    @JsonIgnore
     private List<Checkin> checkins;
 
     private String title;    

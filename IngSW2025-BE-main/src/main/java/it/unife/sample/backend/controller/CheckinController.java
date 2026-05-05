@@ -1,5 +1,7 @@
 package it.unife.sample.backend.controller;
 
+import it.unife.sample.backend.dto.CheckinCreateDTO;
+import it.unife.sample.backend.dto.CheckinUpdateDTO;
 import it.unife.sample.backend.model.Checkin;
 import it.unife.sample.backend.model.Habit;
 import it.unife.sample.backend.service.CheckinService;
@@ -49,14 +51,14 @@ public class CheckinController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Checkin> updateCheckin(@PathVariable UUID id, @RequestBody Checkin updated) {
+    public ResponseEntity<Checkin> updateCheckin(@PathVariable UUID id, @RequestBody CheckinUpdateDTO dto) {
         Optional<Checkin> checkinOpt = service.findById(id);
         if (checkinOpt.isEmpty()) return ResponseEntity.notFound().build();
 
         Checkin checkin = checkinOpt.get();
-        checkin.setStatus(updated.getStatus());
-        checkin.setNote(updated.getNote());
-        checkin.setMood(updated.getMood());
+        checkin.setStatus(dto.getStatus());
+        checkin.setNote(dto.getNote());
+        checkin.setMood(dto.getMood());
 
         return ResponseEntity.ok(service.save(checkin));
     }
@@ -76,19 +78,33 @@ public class CheckinController {
     }
     
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Checkin checkin, @RequestParam String habitId) {
-        try {
-            UUID habitUUID = UUID.fromString(habitId);
-            Optional<Habit> habitOpt = habitService.findById(habitUUID);
-            if (habitOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body("Habit not found");
-            }
-            checkin.setHabit(habitOpt.get());
-            return ResponseEntity.ok(service.save(checkin));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid habitId format");
+public ResponseEntity<?> create(
+        @RequestBody CheckinCreateDTO dto,
+        @RequestParam String habitId) {
+
+    try {
+        UUID habitUUID = UUID.fromString(habitId);
+
+        Optional<Habit> habitOpt = habitService.findById(habitUUID);
+        if (habitOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Habit not found");
         }
+
+        Checkin checkin = new Checkin();
+        checkin.setHabit(habitOpt.get());
+        checkin.setStatus(dto.getStatus());
+        checkin.setNote(dto.getNote());
+        checkin.setMood(dto.getMood() != null ? dto.getMood() : 0);
+        checkin.setDate(
+            dto.getDate() != null ? LocalDate.parse(dto.getDate()) : LocalDate.now()
+        );
+
+        return ResponseEntity.ok(service.save(checkin));
+
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body("Invalid habitId format");
     }
+}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {

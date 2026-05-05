@@ -15,6 +15,7 @@ import { NgFor, NgIf, CommonModule } from '@angular/common';
 import { Checkin } from '../../dto/checkin.model';
 import { CheckinService } from '../../service/checkin.service';
 import { DayCarouselComponent } from '../day-carousel/day-carousel.component';
+import { HabitUpdateDTO } from '../../dto/habit.model';
 
 @Component({
   selector: 'app-habits',
@@ -118,24 +119,29 @@ export class HabitsComponent implements OnInit {
     let checkin = this.getCheckinForHabitAndDate(habit.id!, this.selectedDate);
 
     if (!checkin) {
-      // Se non esiste, crea il checkin
       checkin = {
-        habit: habit,
-        date: this.selectedDate,
         status: status,
         note: '',
+        mood: 0
       } as Checkin;
-      await lastValueFrom(this.checkinService.create(checkin));
+      await lastValueFrom(this.checkinService.create(habit.id!, checkin));
     } else {
-      // Se esiste, aggiorna lo stato
       checkin.status = status;
-      await lastValueFrom(this.checkinService.update(checkin.id!, checkin));
+      await lastValueFrom(this.checkinService.update(checkin.id!, {
+        status: status,
+        note: checkin.note ?? '',
+        mood: checkin.mood ?? 0
+      }));
     }
     await this.loadData();
   }
   
   async saveCheckinEdit(checkin: Checkin) {
-    await lastValueFrom(this.checkinService.update(checkin.id!, checkin));
+    await lastValueFrom(this.checkinService.update(checkin.id!, { 
+                                                  status: checkin.status,
+                                                  note: checkin.note ?? '',
+                                                  mood:checkin.mood ?? 0
+                                                    }));
     this.editingCheckinId = null;
     await this.loadData();
   }
@@ -171,12 +177,13 @@ export class DialogAddHabit{
   constructor(private HabitService: HabitService) {}
 
   async save() {
-    let habit = new Habit();
     const user = JSON.parse(localStorage.getItem('user')!);
-    habit.userId = user.id;
-    habit.title = this.title;
-    habit.description = this.description;
-    habit.partOfDay = this.partOfDay;
+    const habit: HabitUpdateDTO = {
+        title: this.title,
+        description: this.description,
+        partOfDay: this.partOfDay,
+        userId: user.id
+    };
     await lastValueFrom(this.HabitService.create(habit));
     this.dialogRef.close();
   }

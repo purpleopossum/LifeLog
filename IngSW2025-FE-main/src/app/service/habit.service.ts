@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Habit } from '../dto/habit.model';
+import { Habit, HabitUpdateDTO } from '../dto/habit.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -24,12 +24,11 @@ export class HabitService {
   }
 
 
-  create(habit: Habit): Observable<Habit> {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    return this.http.post<Habit>(`${this.apiUrl}?userId=${user.id}`, habit);
+  create(habit: HabitUpdateDTO): Observable<Habit> {
+    return this.http.post<Habit>(`${this.apiUrl}`, habit);
   }
 
-  update(id: string, habit: Habit): Observable<Habit> {
+  update(id: string, habit: HabitUpdateDTO): Observable<Habit> {
     return this.http.put<Habit>(`${this.apiUrl}/${id}`, habit);
   }
 

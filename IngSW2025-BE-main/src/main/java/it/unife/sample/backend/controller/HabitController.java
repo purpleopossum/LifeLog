@@ -1,17 +1,26 @@
 package it.unife.sample.backend.controller;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import it.unife.sample.backend.dto.HabitUpdateDTO;
 import it.unife.sample.backend.model.Habit;
 import it.unife.sample.backend.model.User;
 import it.unife.sample.backend.service.HabitService;
 import it.unife.sample.backend.service.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*; 
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/habits")
@@ -40,13 +49,17 @@ public class HabitController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Habit entity, @RequestParam String userId) {
+    public ResponseEntity<?> create(@RequestBody HabitUpdateDTO dto) {
         try {
-            UUID userUUID = UUID.fromString(userId);
+            UUID userUUID = UUID.fromString(dto.getUserId());
             Optional<User> userOpt = userService.findById(userUUID);
             if (userOpt.isEmpty()) {
                 return ResponseEntity.badRequest().body("User not found");
             }
+            Habit entity = new Habit();
+            entity.setTitle(dto.getTitle());
+            entity.setDescription(dto.getDescription());
+            entity.setPartOfDay(dto.getPartOfDay());
             entity.setUser(userOpt.get());
             if (entity.getDescription() == null) entity.setDescription("");
             if (entity.getPartOfDay() == null) entity.setPartOfDay("");
@@ -60,13 +73,21 @@ public class HabitController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Habit> update(@PathVariable UUID id, @RequestBody Habit entity) {
-        if (!service.findById(id).isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        entity.setId(id);
-        return ResponseEntity.ok(service.save(entity));
+public ResponseEntity<Habit> update(@PathVariable UUID id, @RequestBody HabitUpdateDTO dto) {
+
+    Optional<Habit> habitOpt = service.findById(id);
+    if (habitOpt.isEmpty()) {
+        return ResponseEntity.notFound().build();
     }
+
+    Habit entity = habitOpt.get();
+
+    entity.setTitle(dto.getTitle());
+    entity.setDescription(dto.getDescription());
+    entity.setPartOfDay(dto.getPartOfDay());
+
+    return ResponseEntity.ok(service.save(entity));
+}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {

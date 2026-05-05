@@ -15,8 +15,8 @@ export class CheckinService {
     return this.http.get<Checkin[]>(this.apiUrl);
   }
 
-  create(checkin: Checkin): Observable<Checkin> {
-    return this.http.post<Checkin>(this.apiUrl, checkin);
+  create(habitId: string, checkin: any): Observable<Checkin> {
+    return this.http.post<Checkin>(`${this.apiUrl}?habitId=${habitId}`, checkin);
   }
 
   getByHabitAndDate(habitId: string, date: string): Observable<Checkin> {
@@ -31,8 +31,13 @@ export class CheckinService {
     return this.http.get<Checkin[]>(`${this.apiUrl}/user/${userId}`, );
   }
 
-  update(id: string, checkin: Checkin): Observable<Checkin> {
-    return this.http.put<Checkin>(`${this.apiUrl}/${id}`, checkin);
+  update(id: string, checkin: any): Observable<Checkin> {
+      const payload = {
+          status: checkin.status,
+          note: checkin.note,
+          mood: checkin.mood
+      }
+      return this.http.put<Checkin>(`${this.apiUrl}/${id}`, payload);
   }
 
   delete(id: string): Observable<void> {
