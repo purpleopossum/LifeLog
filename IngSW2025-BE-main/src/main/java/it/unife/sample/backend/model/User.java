@@ -18,6 +18,9 @@ public class User {
     private String email;
     private String password;
     
+    @Column(unique = true, length = 6)
+    private String friendCode;
+    
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Habit> habits;
