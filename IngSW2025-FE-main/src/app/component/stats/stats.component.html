@@ -31,17 +31,17 @@
   </div>
 
   <!-- PARTNER -->
-  <div *ngIf="stats.partner; else addPartnerTemplate" class="stats-card">
-    <h2>{{ stats.partner.name }}'s productivity</h2>
-
-    <button (click)="unfriend()">Remove</button>
+  <div *ngIf="friend; else noPartnerTemplate" class="stats-card">
+    <h2>{{ friend.username }}'s productivity</h2>
 
     <div class="progress-container">
       <div class="progress-bar"
-           [style.width.%]="stats.partner.completedPercentageLast7Days">
-        {{ stats.partner.completedPercentageLast7Days.toFixed(2) }}%
+           [style.width.%]="friendStats?.completedPercentageLast7Days ?? 0">
+        {{ (friendStats?.completedPercentageLast7Days ?? 0).toFixed(2) }}%
       </div>
     </div>
+
+    <h2>last 7 days</h2>
 
     <div class="stats">
       <canvas #partnerDonutChart width="200"></canvas>
@@ -49,13 +49,37 @@
     </div>
   </div>
 
-  <!-- ADD PARTNER -->
-  <ng-template #addPartnerTemplate>
-    <div class="stats-card">
-        <h3>No partner yet</h3>
-        <input [(ngModel)]="partnerCode" placeholder="Enter partner code" />
-        <button (click)="addPartner()">Add Partner</button>
-    </div>
-  </ng-template>
+    <ng-template #noPartnerTemplate>
 
+        <!-- 1. PENDING REQUESTS -->
+        <div class="stats-card" *ngIf="pendingFriends.length > 0; else addPartnerTemplate">
+    
+            <h3>Pending requests</h3>
+    
+            <div *ngFor="let p of pendingFriends" class="pending-item">
+            <p>{{ p.username }}</p>
+    
+            <button (click)="accept(p.friendshipId)">Accept</button>
+            <button (click)="reject(p.friendshipId)">Reject</button>
+            </div>
+    
+        </div>
+    
+        <!-- 2. ADD PARTNER -->
+        <ng-template #addPartnerTemplate>
+            <div class="stats-card">
+            <h3>No partner yet</h3>
+        
+              <input
+                [(ngModel)]="partnerCode"
+                placeholder="Enter partner code"
+              />
+        
+              <button (click)="request(this.partnerCode)">
+                Add Partner
+              </button>
+            </div>
+          </ng-template>
+    
+    </ng-template>
 </div>

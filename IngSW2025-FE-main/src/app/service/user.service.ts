@@ -19,6 +19,14 @@ export class UserService {
     return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 
+  getByUsername(username: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/username/${username}`);
+  }
+
+  getEmail(email: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/email/${email}`);
+  }
+
   create(entity: User): Observable<User> {
     return this.http.post<User>(this.apiUrl, entity);
   }

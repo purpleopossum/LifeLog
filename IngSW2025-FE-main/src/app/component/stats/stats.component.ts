@@ -10,8 +10,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StatsService } from '../../service/stats.service';
+import { FriendService } from '../../service/friend.service';
 import { Stats } from '../../dto/stats.model';
 import { Chart } from 'chart.js/auto';
+import { Friend } from '../../dto/friend.model';
 
 @Component({
   selector: 'app-stats',
@@ -23,7 +25,10 @@ import { Chart } from 'chart.js/auto';
 export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   stats!: Stats;
+  friend?: Friend | null; 
+  friendStats?: Stats | null;
   partnerCode: string = '';
+  pendingFriends: Friend[] = [];
   lineChartInstance?: Chart;
   donutChartInstance?: Chart;
   partnerDonutChartInstance?: Chart;
@@ -36,19 +41,42 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
       private statsService: StatsService,
+      private friendService: FriendService,
       private cd: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
+  loadStats(userId: string, target: 'self' | 'friend') {
+      this.statsService.getStats(userId).subscribe(data => {
+          if (target === 'self') {
+            this.stats = data;
+          } else {
+            this.friendStats = data;
+          }
+          this.cd.detectChanges();
+          setTimeout(() => this.buildCharts());
+      });
+  }
+
+  loadFriends() {
       const user = JSON.parse(localStorage.getItem('user')!);
 
-      this.statsService.getStats(user.id).subscribe(data => {
-          this.stats = data;
-          this.cd.detectChanges();
-          setTimeout(() => {
-              this.buildCharts();
-          })
+      this.friendService.getFriends(user.id).subscribe(data => {
+          this.friend = data[0] ?? null;
+
+          if (this.friend) {
+              this.loadStats(this.friend.userId, 'friend');
+          } else {
+              this.friendService.getPending(user.id).subscribe(data => {
+                  this.pendingFriends = data;
+              });
+          }
       });
+  }
+
+  ngOnInit(): void {
+      const user = JSON.parse(localStorage.getItem('user')!);
+      this.loadStats(user.id, 'self');
+      this.loadFriends();
   }
 
   ngAfterViewInit() {}
@@ -61,6 +89,8 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.donutChartInstance?.destroy();
       this.partnerDonutChartInstance?.destroy();
+      this.lineChartInstance?.destroy();
+      this.partnerLineChartInstance?.destroy();
 
       const canvas = this.donutChart.nativeElement;
       const ctx = canvas.getContext('2d');
@@ -96,18 +126,18 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
 
       
 
-      if (this.stats.partner && this.partnerDonutChart && this.partnerLineChart) {
+      if (this.friend && this.friendStats && this.partnerDonutChart && this.partnerLineChart) {
           this.partnerDonutChartInstance = new Chart(this.partnerDonutChart.nativeElement, {
               type: 'doughnut',
               data: {
                   labels: ['Completed', 'Skipped', 'To-do'],
                   datasets: [{
                       data: [
-                          this.stats.partner.totalWeekCompleted,
-                          this.stats.partner.totalWeekSkipped,
+                          this.friendStats.totalWeekCompleted,
+                          this.friendStats.totalWeekSkipped,
                           Math.max(0,
-                          (this.stats.partner.totalWeekCheckins ?? 0)
-                          - ((this.stats.partner.totalWeekCompleted ?? 0) + (this.stats.partner.totalWeekSkipped ?? 0))
+                          (this.friendStats.totalWeekCheckins ?? 0)
+                          - ((this.friendStats.totalWeekCompleted ?? 0) + (this.friendStats.totalWeekSkipped ?? 0))
                             )
 
                       ]
@@ -120,7 +150,7 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
                   labels: this.getLast7Days(),
                   datasets: [{
                       label: 'Completed',
-                      data: this.stats.partner.completedLastSevenDays ?? [],
+                      data: this.friendStats.completedLastSevenDays ?? [],
                       borderColor: '#0094fd',
                       tension: 0.3
                   }]
@@ -163,22 +193,27 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
     return days;
   }
 
-  unfriend() {
-    if (confirm('Remove partner?')) {
-      this.statsService.unfriend().subscribe(() => {
-        this.stats.partner = undefined;
-      });
-    }
+  request(partnerCode: string) {
+      const user = JSON.parse(localStorage.getItem('user')!);
+    this.friendService.request(user.id, partnerCode).subscribe({
+        next: (res) => {
+            console.log('RESPONSE:', res);
+        },
+        error: (err) => {
+            console.error('ERROR:', err);
+        }
+    });
   }
 
-  addPartner() {
-      this.statsService.addPartner(this.partnerCode).subscribe(() => {
-          const user = JSON.parse(localStorage.getItem('user')!);
-          this.statsService.getStats(user.id).subscribe(data => {
-              this.stats = data;
-              this.cd.detectChanges();
-              this.buildCharts();
-          });
-      });
+  accept(friendshipId: string) {
+    this.friendService.accept(friendshipId).subscribe(() => {
+        this.loadFriends();
+    })
+  }
+
+  reject(friendshipId: string) {
+    this.friendService.reject(friendshipId).subscribe(() => {
+        this.loadFriends();
+    })
   }
 }

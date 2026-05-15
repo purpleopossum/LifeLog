@@ -5,18 +5,15 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class StatsService {
+    apiUrl = "/api/stats"
 
   constructor(private http: HttpClient) {}
 
   getStats(userId: string): Observable<Stats> {
-    return this.http.get<Stats>(`/api/stats/user/${userId}`);
+    return this.http.get<Stats>(`${this.apiUrl}/user/${userId}`);
   }
 
-  unfriend(): Observable<void> {
-    return this.http.post<void>('/api/partner/unfriend', {});
-  }
-
-  addPartner(code: string): Observable<void> {
-    return this.http.post<void>('/api/partner/add', { code });
+  getByHabitId(habitId: string): Observable<Stats> {
+    return this.http.get<Stats>(`${this.apiUrl}/habit/${habitId}`);
   }
 }
