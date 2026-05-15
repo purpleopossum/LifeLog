@@ -27,28 +27,38 @@ public class FriendshipService {
 
     public Friendship sendRequest(UUID senderId, String friendCode) {
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new IllegalArgumentException("Sender non trovato"));
+                .orElseThrow(() -> new IllegalArgumentException("Sender not found"));
 
         if (friendCode == null || friendCode.isBlank()) {
-            throw new IllegalArgumentException("friendCode obbligatorio");
+            throw new IllegalArgumentException("friendCode is required");
         }
 
         User receiver = userRepository.findByFriendCode(friendCode.trim().toUpperCase());
         if (receiver == null) {
-            throw new IllegalArgumentException("Nessun utente trovato con il friendCode indicato");
+            throw new IllegalArgumentException("No user found with the provided friendCode");
         }
 
         if (sender.getId().equals(receiver.getId())) {
-            throw new IllegalArgumentException("Non puoi aggiungere te stesso come partner");
+            throw new IllegalArgumentException("You cannot add yourself as a partner");
+        }
+
+        // Check that receiver doesn't already have an ACCEPTED partner
+        if (friendshipRepository.findAcceptedFriendshipByUserId(receiver.getId(), ACCEPTED).isPresent()) {
+            throw new IllegalArgumentException("User already has a friend");
+        }
+
+        // Check that sender doesn't already have an ACCEPTED partner
+        if (friendshipRepository.findAcceptedFriendshipByUserId(sender.getId(), ACCEPTED).isPresent()) {
+            throw new IllegalArgumentException("You already have a friend");
         }
 
         Friendship existing = friendshipRepository.findBetweenUsers(sender.getId(), receiver.getId()).orElse(null);
         if (existing != null) {
             if (ACCEPTED.equals(existing.getStatus())) {
-                throw new IllegalArgumentException("Siete gia partner");
+                throw new IllegalArgumentException("You are already partners");
             }
             if (PENDING.equals(existing.getStatus())) {
-                throw new IllegalArgumentException("Richiesta gia presente e in attesa");
+                throw new IllegalArgumentException("Request already exists and is pending");
             }
             if (REJECTED.equals(existing.getStatus())) {
                 existing.setSender(sender);
@@ -59,12 +69,10 @@ public class FriendshipService {
             }
         }
 
-        if (hasAcceptedPartner(sender.getId())) {
-            throw new IllegalArgumentException("Il sender ha gia un partner attivo");
-        }
-
-        if (hasAcceptedPartner(receiver.getId())) {
-            throw new IllegalArgumentException("Il receiver ha gia un partner attivo");
+        // Check that receiver doesn't already have 3 PENDING requests
+        long pendingCount = friendshipRepository.countByReceiverIdAndStatus(receiver.getId(), PENDING);
+        if (pendingCount >= 3) {
+            throw new IllegalArgumentException("User's inbox is full");
         }
 
         Friendship friendship = new Friendship();
@@ -78,53 +86,66 @@ public class FriendshipService {
 
     public Friendship accept(UUID friendshipId) {
         Friendship friendship = friendshipRepository.findById(friendshipId)
-                .orElseThrow(() -> new IllegalArgumentException("Richiesta non trovata"));
+                .orElseThrow(() -> new IllegalArgumentException("Request not found"));
 
         if (!PENDING.equals(friendship.getStatus())) {
-            throw new IllegalArgumentException("Solo le richieste PENDING possono essere accettate");
+            throw new IllegalArgumentException("Only PENDING requests can be accepted");
         }
 
-        if (hasAcceptedPartnerExcept(friendship.getSender().getId(), friendship.getId())) {
-            throw new IllegalArgumentException("Il sender ha gia un partner attivo");
+        // Check that sender doesn't already have an ACCEPTED partner
+        if (friendshipRepository.findAcceptedFriendshipByUserId(friendship.getSender().getId(), ACCEPTED).isPresent()) {
+            throw new IllegalArgumentException("Sender already has an active partner");
         }
 
-        if (hasAcceptedPartnerExcept(friendship.getReceiver().getId(), friendship.getId())) {
-            throw new IllegalArgumentException("Il receiver ha gia un partner attivo");
+        // Check that receiver doesn't already have an ACCEPTED partner
+        if (friendshipRepository.findAcceptedFriendshipByUserId(friendship.getReceiver().getId(), ACCEPTED).isPresent()) {
+            throw new IllegalArgumentException("Receiver already has an active partner");
         }
 
+        // Accept the request
         friendship.setStatus(ACCEPTED);
-        return friendshipRepository.save(friendship);
+        friendshipRepository.save(friendship);
+
+        // Auto-reject all other PENDING requests received by the receiver
+        List<Friendship> otherPendingRequests = friendshipRepository.findOtherPendingRequestsByReceiverId(
+                friendship.getReceiver().getId(), PENDING, friendship.getId()
+        );
+        for (Friendship otherRequest : otherPendingRequests) {
+            otherRequest.setStatus(REJECTED);
+            friendshipRepository.save(otherRequest);
+        }
+
+        return friendship;
     }
 
     public Friendship reject(UUID friendshipId) {
         Friendship friendship = friendshipRepository.findById(friendshipId)
-                .orElseThrow(() -> new IllegalArgumentException("Richiesta non trovata"));
+                .orElseThrow(() -> new IllegalArgumentException("Request not found"));
 
         if (!PENDING.equals(friendship.getStatus())) {
-            throw new IllegalArgumentException("Solo le richieste PENDING possono essere rifiutate");
+            throw new IllegalArgumentException("Only PENDING requests can be rejected");
         }
 
         friendship.setStatus(REJECTED);
         return friendshipRepository.save(friendship);
     }
 
-    public List<FriendDTO> getFriends(UUID userId) {
+    public FriendDTO getFriend(UUID userId) {
         if (!userRepository.existsById(userId)) {
-            throw new IllegalArgumentException("Utente non trovato");
+            throw new IllegalArgumentException("User not found");
         }
 
-        return friendshipRepository.findByUserIdAndStatus(userId, ACCEPTED)
-                .stream()
-                .map(f -> {
-                    User friend = f.getSender().getId().equals(userId) ? f.getReceiver() : f.getSender();
-                    return toFriendDTO(f, friend);
+        return friendshipRepository.findAcceptedFriendshipByUserId(userId, ACCEPTED)
+                .map(friendship -> {
+                    User friend = friendship.getSender().getId().equals(userId) ? friendship.getReceiver() : friendship.getSender();
+                    return toFriendDTO(friendship, friend);
                 })
-                .toList();
+                .orElse(null);
     }
 
     public List<FriendDTO> getPendingRequests(UUID userId) {
         if (!userRepository.existsById(userId)) {
-            throw new IllegalArgumentException("Utente non trovato");
+            throw new IllegalArgumentException("User not found");
         }
 
         return friendshipRepository.findByReceiverIdAndStatus(userId, PENDING)
@@ -137,16 +158,6 @@ public class FriendshipService {
         return friendshipRepository.findBetweenUsers(userA, userB)
                 .map(f -> ACCEPTED.equals(f.getStatus()))
                 .orElse(false);
-    }
-
-    private boolean hasAcceptedPartner(UUID userId) {
-        return !friendshipRepository.findByUserIdAndStatus(userId, ACCEPTED).isEmpty();
-    }
-
-    private boolean hasAcceptedPartnerExcept(UUID userId, UUID friendshipId) {
-        return friendshipRepository.findByUserIdAndStatus(userId, ACCEPTED)
-                .stream()
-                .anyMatch(f -> !f.getId().equals(friendshipId));
     }
 
     private FriendDTO toFriendDTO(Friendship friendship, User user) {

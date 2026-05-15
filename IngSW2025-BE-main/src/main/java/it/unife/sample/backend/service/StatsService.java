@@ -21,14 +21,16 @@ public class StatsService {
 	private CheckinRepository checkinRepository;
 
 	public Stats getByUserId(UUID userId) {
-		return buildStats(checkinRepository.findByHabitUserId(userId));
+		List<Checkin> checkins = checkinRepository.findByHabitUserId(userId);
+		int numHabits = (int) checkins.stream().map(c -> c.getHabit().getId()).distinct().count();
+		return buildStats(checkins, numHabits);
 	}
 
 	public Stats getByHabitId(UUID habitId) {
-		return buildStats(checkinRepository.findByHabitId(habitId));
+		return buildStats(checkinRepository.findByHabitId(habitId), 1);
 	}
 
-	private Stats buildStats(List<Checkin> checkins) {
+	private Stats buildStats(List<Checkin> checkins, int numHabits) {
 		Set<LocalDate> uniqueDaysSet = new HashSet<>();
 		for (Checkin checkin : checkins) {
 			if (checkin.getDate() != null) {
@@ -48,7 +50,7 @@ public class StatsService {
 		stats.setSkippedPercentageLast7Days(calculateLast7DaysStatusPercentage(checkins, false));
 		stats.setTotalWeekCompleted(countLast7Days(checkins, "completed"));
 		stats.setTotalWeekSkipped(countLast7Days(checkins, "skipped"));
-		stats.setTotalWeekCheckins(countLast7DaysAll(checkins));
+		stats.setTotalWeekCheckins(numHabits * 7);
 		stats.setCompletedLastSevenDays(getCompletedLast7Days(checkins));
 		return stats;
 	}
@@ -78,21 +80,7 @@ public class StatsService {
 
         return count;
     }
-	private int countLast7DaysAll(List<Checkin> checkins) {
-    LocalDate today = LocalDate.now();
-    LocalDate start = today.minusDays(6);
 
-    int count = 0;
-
-    for (Checkin checkin : checkins) {
-        LocalDate date = checkin.getDate();
-        if (date == null || date.isBefore(start) || date.isAfter(today)) continue;
-
-        count++;
-    }
-
-    return count;
-}
 private List<Integer> getCompletedLast7Days(List<Checkin> checkins) {
     LocalDate today = LocalDate.now();
     List<Integer> result = new ArrayList<>();
@@ -106,9 +94,7 @@ private List<Integer> getCompletedLast7Days(List<Checkin> checkins) {
             if (c.getDate() != null && c.getDate().equals(day)) {
                 String status = c.getStatus() == null ? "" : c.getStatus().toLowerCase();
 
-                if (status.equals("completed") ||
-                    status.equals("done") ||
-                    status.equals("success")) {
+                if (status.equals("completed")) {
                     count++;
                 }
             }
@@ -136,11 +122,11 @@ private List<Integer> getCompletedLast7Days(List<Checkin> checkins) {
 			totalInLast7Days++;
 			String status = checkin.getStatus() == null ? "" : checkin.getStatus().trim().toLowerCase();
 
-			if (completed && (status.equals("completed") || status.equals("done") || status.equals("success"))) {
+			if (completed && (status.equals("completed"))) {
 				matchingStatus++;
 			}
 
-			if (!completed && (status.equals("skipped") || status.equals("skip"))) {
+			if (!completed && (status.equals("skipped"))) {
 				matchingStatus++;
 			}
 		}

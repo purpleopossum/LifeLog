@@ -69,12 +69,18 @@ public class FriendshipController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getFriends(@PathVariable UUID userId) {
+    public ResponseEntity<?> getFriend(@PathVariable UUID userId) {
         try {
-            List<FriendDTO> friends = friendshipService.getFriends(userId);
-            return ResponseEntity.ok(friends);
+            FriendDTO friend = friendshipService.getFriend(userId);
+            if (friend == null) {
+                return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.ok(friend);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
