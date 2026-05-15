@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
+import { UserService } from '../../service/user.service';
 
 @Component({
   selector: 'app-login',
@@ -18,11 +18,14 @@ export class LoginComponent {
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService ) {}
+  constructor(private router: Router, 
+              private authService: AuthService, 
+              private userService: UserService
+             ) {}
   
 
   async login() {
-    this.http.get<any>(`/api/user/username/${this.username}`, { withCredentials: true }).subscribe({
+    this.userService.getByUsername(this.username).subscribe({
       next: (user) => {
         if (user && user.password === this.password) {
           localStorage.setItem('user', JSON.stringify(user));
