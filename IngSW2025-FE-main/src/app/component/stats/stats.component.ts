@@ -60,8 +60,8 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
   loadFriends() {
       const user = JSON.parse(localStorage.getItem('user')!);
 
-      this.friendService.getFriends(user.id).subscribe(data => {
-          this.friend = data[0] ?? null;
+      this.friendService.getFriend(user.id).subscribe(data => {
+          this.friend = data ?? null;
 
           if (this.friend) {
               this.loadStats(this.friend.userId, 'friend');
