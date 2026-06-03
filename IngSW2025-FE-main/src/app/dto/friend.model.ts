@@ -7,3 +7,9 @@ export interface Friendship {
   status: string;
   createdAt: string;
 }
+
+export interface FriendshipResponse {
+  id: string;
+  status: string;
+  message: string;
+}

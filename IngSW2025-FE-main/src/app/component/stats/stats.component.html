@@ -28,11 +28,38 @@
         <h1>{{ stats.currentStreak }}</h1>
       </div>
     </div>
+    <div class="thought-bubble" *ngIf="currentMessage">
+      {{ currentMessage }}
+    </div>
+    <div class="message-selector">
+    
+      <label>Encouragement message</label>
+    
+      <select [(ngModel)]="selectedMessage">
+        <option [ngValue]="undefined">Select a message</option>
+    
+        <option *ngFor="let msg of messageOptions" [ngValue]="msg">
+          {{ textMap[msg] }}
+        </option>
+      </select>
+    
+      <button (click)="setMessage(selectedMessage!)">
+        Set message
+      </button>
+    
+      <button (click)="clearMessage()">
+        Clear
+      </button>
+    
+    </div>
   </div>
+
 
   <!-- PARTNER -->
   <div *ngIf="friend; else noPartnerTemplate" class="stats-card">
+
     <h2>{{ friend.username }}'s productivity</h2>
+    
 
     <div class="progress-container">
       <div class="progress-bar"
@@ -47,42 +74,79 @@
       <canvas #partnerDonutChart width="200"></canvas>
       <canvas #partnerLineChart></canvas>
     </div>
+
+    <div class=stats>
+        <div>
+          <h3>longest streak</h3>
+          <h1>{{ friendStats?.longestStreak ?? 0 }}</h1>
+        </div>
+
+        <div>
+          <h3>current streak</h3>
+          <h1>{{ friendStats?.currentStreak ?? 0 }}</h1>
+        </div>
+    </div>
+    <div class="thought-bubble" *ngIf="currentFriendMessage">
+      {{ currentFriendMessage }}
+    </div>
+
+    <button class="danger-btn" (click)="removeFriend()">
+      Remove friend
+    </button>
+
   </div>
 
-    <ng-template #noPartnerTemplate>
 
-        <!-- 1. PENDING REQUESTS -->
-        <div class="stats-card" *ngIf="pendingFriends.length > 0; else addPartnerTemplate">
-    
-            <h3>Pending requests</h3>
-    
-            <div *ngFor="let p of pendingFriends" class="pending-item">
-            <p>{{ p.receiver.username }}</p>
-    
-            <button (click)="accept(p.id)">Accept</button>
-            <button (click)="reject(p.id)">Reject</button>
-            </div>
-    
+  <!-- NO PARTNER TEMPLATE -->
+  <ng-template #noPartnerTemplate>
+
+    <!-- 1. PENDING REQUESTS -->
+    <div class="stats-card"
+         *ngIf="pendingFriends.length > 0; else addPartnerTemplate">
+
+      <h3>Pending requests</h3>
+
+      <div *ngFor="let p of pendingFriends" class="pending-item">
+        <p>{{ p.receiver.username }}</p>
+
+        <button (click)="accept(p.id)">Accept</button>
+        <button (click)="reject(p.id)">Reject</button>
+      </div>
+
+    </div>
+
+
+    <!-- 2. ADD PARTNER -->
+    <ng-template #addPartnerTemplate>
+
+      <div class="stats-card">
+
+        <h3>No partner yet</h3>
+
+        <div class="friend-code-box">
+          <span class="code">{{ currentUser.friendCode }}</span>
+
+          <button class="copy-btn" (click)="copyFriendCode()">
+            📋
+          </button>
         </div>
-    
-        <!-- 2. ADD PARTNER -->
-        <ng-template #addPartnerTemplate>
-            <div class="stats-card">
-            <h3>No partner yet</h3>
 
-            <p>Your friendCode:</p>
-            <h2>{{ currentUser.friendCode }}</h2>
-        
-              <input
-                [(ngModel)]="partnerCode"
-                placeholder="Enter partner code"
-              />
-        
-              <button (click)="request(this.partnerCode)">
-                Add Partner
-              </button>
-            </div>
-          </ng-template>
-    
+        <input class="code"
+               [(ngModel)]="partnerCode"
+               placeholder="Enter partner code" />
+
+        <button (click)="request(partnerCode)">
+          Add Partner
+        </button>
+
+        <p *ngIf="requestMessage" class="info-message">
+          {{ requestMessage }}
+        </p>
+
+      </div>
+
     </ng-template>
+
+  </ng-template>
+
 </div>

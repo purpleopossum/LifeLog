@@ -14,7 +14,7 @@ import { FriendService } from '../../service/friend.service';
 import { Stats } from '../../dto/stats.model';
 import { Chart } from 'chart.js/auto';
 import { UserService } from '../../service/user.service';
-import { EncouragementMessageType } from '../../dto/user.model';
+import { EncouragementMessageText, EncouragementMessageType } from '../../dto/user.model';
 import { Friendship } from '../../dto/friend.model';
 
 @Component({
@@ -35,6 +35,10 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
   donutChartInstance?: Chart;
   partnerDonutChartInstance?: Chart;
   partnerLineChartInstance?: Chart;
+  requestMessage: string = '';
+  messageOptions = Object.values(EncouragementMessageType);
+  selectedMessage?: EncouragementMessageType;
+  textMap = EncouragementMessageText;
 
   @ViewChild('donutChart') donutChart!: ElementRef;
   @ViewChild('lineChart') lineChart!: ElementRef;
@@ -89,12 +93,16 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   
 
-  get currentMessage(): EncouragementMessageType | undefined {
-    return this.currentUser.message;
-  }
+  get currentMessage(): string | undefined {
+    const msg = this.currentUser?.message as EncouragementMessageType | undefined;
 
-  get currentFriendMessage(): EncouragementMessageType | undefined {
-      return this.friend?.message;
+    return msg ? this.textMap[msg] : undefined;
+  }
+ 
+  get currentFriendMessage(): string | undefined {
+    const msg = this.friend?.message as EncouragementMessageType | undefined;
+
+    return msg ? this.textMap[msg] : undefined;
   }
 
   ngOnInit(): void {
@@ -219,10 +227,10 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
   request(partnerCode: string) {
     this.friendService.request(this.currentUser.id, partnerCode).subscribe({
         next: (res) => {
-            console.log('RESPONSE:', res);
+            this.requestMessage = res.message;
         },
         error: (err) => {
-            console.error('ERROR:', err);
+            this.requestMessage = err.error;
         }
     });
   }
@@ -249,6 +257,32 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userService.clearMessage(this.currentUser.id)
         .subscribe(user => {
             localStorage.setItem('user', JSON.stringify(user));
+        });
+   }
+
+   removeFriend() {
+    if (!this.friendship) {
+        return;
+    }
+    this.friendService.removeFriendship(this.friendship.id)
+        .subscribe(() => {
+            this.friendship = null;
+            this.friendStats = null;
+            this.loadFriends();
+        });
+   }
+    
+   copyFriendCode() {
+    const code = this.currentUser?.friendCode;
+
+    if (!code) return;
+
+    navigator.clipboard.writeText(code)
+        .then(() => {
+            console.log('Copied:', code);
+        })
+        .catch(err => {
+            console.error('Copy failed', err)
         });
    }
 }

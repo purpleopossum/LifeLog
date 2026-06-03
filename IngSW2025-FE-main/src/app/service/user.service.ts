@@ -39,9 +39,16 @@ export class UserService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  setMessage(id: string, message: EncouragementMessageType): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${id}/message`, message);
-  }
+  
+  setMessage(id: string, message: EncouragementMessageType) {
+      return this.http.put(
+        `${this.apiUrl}/${id}/message`,
+        JSON.stringify(message),
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
   clearMessage(id: string): Observable<User> {
     return this.http.delete<User>(`${this.apiUrl}/${id}/message`);

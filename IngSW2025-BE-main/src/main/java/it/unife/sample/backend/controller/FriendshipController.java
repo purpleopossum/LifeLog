@@ -4,6 +4,7 @@ import it.unife.sample.backend.model.Friendship;
 import it.unife.sample.backend.service.FriendshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,4 +91,14 @@ public class FriendshipController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
+    @DeleteMapping("/{id}")
+        public ResponseEntity<?> removeFriendship(@PathVariable UUID id) {
+            try {
+                friendshipService.removeFriendship(id);
+                return ResponseEntity.noContent().build();
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+        }
 }

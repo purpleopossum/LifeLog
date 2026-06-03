@@ -154,4 +154,14 @@ public class FriendshipService {
                 .orElse(false);
     }
 
+    public void removeFriendship(UUID friendshipId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+            .orElseThrow(() -> new IllegalArgumentException("Friendship non trovata"));
+
+        if (!ACCEPTED.equals(friendship.getStatus())) {
+            throw new IllegalArgumentException("La friendship non è attiva");
+        }
+
+        friendshipRepository.delete(friendship);
+    }
 }
