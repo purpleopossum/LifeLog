@@ -13,7 +13,9 @@ import { StatsService } from '../../service/stats.service';
 import { FriendService } from '../../service/friend.service';
 import { Stats } from '../../dto/stats.model';
 import { Chart } from 'chart.js/auto';
-import { Friend } from '../../dto/friend.model';
+import { UserService } from '../../service/user.service';
+import { EncouragementMessageType } from '../../dto/user.model';
+import { Friendship } from '../../dto/friend.model';
 
 @Component({
   selector: 'app-stats',
@@ -25,10 +27,10 @@ import { Friend } from '../../dto/friend.model';
 export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   stats!: Stats;
-  friend?: Friend | null; 
+  friendship?: Friendship | null;
   friendStats?: Stats | null;
   partnerCode: string = '';
-  pendingFriends: Friend[] = [];
+  pendingFriends: Friendship[] = [];
   lineChartInstance?: Chart;
   donutChartInstance?: Chart;
   partnerDonutChartInstance?: Chart;
@@ -42,8 +44,22 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
       private statsService: StatsService,
       private friendService: FriendService,
+      private userService: UserService, 
       private cd: ChangeDetectorRef
   ) {}
+
+  get currentUser() {
+    return JSON.parse(localStorage.getItem('user')!);
+  }
+  get friend() {
+    if (!this.friendship) {
+        return null;
+    }
+
+    return this.friendship.sender.id === this.currentUser.id
+        ? this.friendship.receiver
+        : this.friendship.sender;
+  }
 
   loadStats(userId: string, target: 'self' | 'friend') {
       this.statsService.getStats(userId).subscribe(data => {
@@ -58,24 +74,31 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadFriends() {
-      const user = JSON.parse(localStorage.getItem('user')!);
+      this.friendService.getFriend(this.currentUser.id).subscribe(data => {
+          this.friendship = data ?? null;
 
-      this.friendService.getFriend(user.id).subscribe(data => {
-          this.friend = data ?? null;
-
-          if (this.friend) {
-              this.loadStats(this.friend.userId, 'friend');
+          if (this.friendship && this.friend && this.friend.id) {
+              this.loadStats(this.friend.id, 'friend');
           } else {
-              this.friendService.getPending(user.id).subscribe(data => {
+              this.friendService.getPending(this.currentUser.id).subscribe(data => {
                   this.pendingFriends = data;
               });
           }
       });
   }
 
+  
+
+  get currentMessage(): EncouragementMessageType | undefined {
+    return this.currentUser.message;
+  }
+
+  get currentFriendMessage(): EncouragementMessageType | undefined {
+      return this.friend?.message;
+  }
+
   ngOnInit(): void {
-      const user = JSON.parse(localStorage.getItem('user')!);
-      this.loadStats(user.id, 'self');
+      this.loadStats(this.currentUser.id, 'self');
       this.loadFriends();
   }
 
@@ -194,8 +217,7 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   request(partnerCode: string) {
-      const user = JSON.parse(localStorage.getItem('user')!);
-    this.friendService.request(user.id, partnerCode).subscribe({
+    this.friendService.request(this.currentUser.id, partnerCode).subscribe({
         next: (res) => {
             console.log('RESPONSE:', res);
         },
@@ -216,4 +238,17 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadFriends();
     })
   }
+
+  setMessage(message: EncouragementMessageType) {
+    this.userService.setMessage(this.currentUser.id, message)
+        .subscribe(user => {
+            localStorage.setItem('user', JSON.stringify(user));
+        })
+  }
+  clearMessage() {
+    this.userService.clearMessage(this.currentUser.id)
+        .subscribe(user => {
+            localStorage.setItem('user', JSON.stringify(user));
+        });
+   }
 }

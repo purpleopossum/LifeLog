@@ -57,10 +57,10 @@
             <h3>Pending requests</h3>
     
             <div *ngFor="let p of pendingFriends" class="pending-item">
-            <p>{{ p.username }}</p>
+            <p>{{ p.receiver.username }}</p>
     
-            <button (click)="accept(p.friendshipId)">Accept</button>
-            <button (click)="reject(p.friendshipId)">Reject</button>
+            <button (click)="accept(p.id)">Accept</button>
+            <button (click)="reject(p.id)">Reject</button>
             </div>
     
         </div>
@@ -69,6 +69,9 @@
         <ng-template #addPartnerTemplate>
             <div class="stats-card">
             <h3>No partner yet</h3>
+
+            <p>Your friendCode:</p>
+            <h2>{{ currentUser.friendCode }}</h2>
         
               <input
                 [(ngModel)]="partnerCode"

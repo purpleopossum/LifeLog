@@ -82,26 +82,20 @@ public class UserController {
 
     @PutMapping("/{id}/message")
     public ResponseEntity<User> setMessage(@PathVariable UUID id, @RequestBody EncouragementMessageType message) {
-        Optional<User> existingOpt = service.findById(id);
-        if (existingOpt.isEmpty()) {
+        try {
+            return ResponseEntity.ok(service.updateMessage(id, message));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-
-        User existing = existingOpt.get();
-        existing.setMessage(message);
-        return ResponseEntity.ok(service.save(existing));
     }
 
     @DeleteMapping("/{id}/message")
     public ResponseEntity<User> clearMessage(@PathVariable UUID id) {
-        Optional<User> existingOpt = service.findById(id);
-        if (existingOpt.isEmpty()) {
+        try {
+            return ResponseEntity.ok(service.clearMessage(id));
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-
-        User existing = existingOpt.get();
-        existing.setMessage(null);
-        return ResponseEntity.ok(service.save(existing));
     }
 
     @DeleteMapping("/{id}")

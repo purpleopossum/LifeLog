@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User } from '../dto/user.model';
+import { EncouragementMessageType, User } from '../dto/user.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -37,5 +37,13 @@ export class UserService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  setMessage(id: string, message: EncouragementMessageType): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}/message`, message);
+  }
+
+  clearMessage(id: string): Observable<User> {
+    return this.http.delete<User>(`${this.apiUrl}/${id}/message`);
   }
 }

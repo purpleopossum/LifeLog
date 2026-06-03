@@ -1,5 +1,6 @@
 package it.unife.sample.backend.service;
 
+import it.unife.sample.backend.model.EncouragementMessageType;
 import it.unife.sample.backend.model.User;
 import it.unife.sample.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,4 +104,20 @@ public class UserService {
         }
         return code.toString();
     }
+
+    public User updateMessage(UUID id, EncouragementMessageType message) {
+        User user = repository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("User non trovato"));
+
+        user.setMessage(message);
+        return repository.save(user);
+    }
+    
+    public User clearMessage(UUID id) {
+        User user = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setMessage(null);
+        return repository.save(user);
+}
 }

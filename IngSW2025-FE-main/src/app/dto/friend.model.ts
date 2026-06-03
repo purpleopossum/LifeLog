@@ -7,12 +7,3 @@ export interface Friendship {
   status: string;
   createdAt: string;
 }
-
-export interface Friend {
-    friendshipId: string;
-    userId: string;
-    username: string;
-    friendCode: string;
-    status: string;
-    createdAt: string;
-}

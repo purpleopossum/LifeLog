@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Friend, Friendship } from '../dto/friend.model';
+import { Friendship } from '../dto/friend.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -28,12 +28,11 @@ export class FriendService {
     return this.http.put<Friendship>(`${this.apiUrl}/${id}/reject`, {});
   }
 
-  getFriend(userId: string): Observable<Friend> {
-      return this.http.get<Friend>(`${this.apiUrl}/user/${userId}`);
+  getFriend(userId: string): Observable<Friendship> {
+      return this.http.get<Friendship>(`${this.apiUrl}/user/${userId}`);
   }
 
-  getPending(userId: string): Observable<Friend[]> {
-      return this.http.get<Friend[]>(`${this.apiUrl}/pending/${userId}`);
-    
+  getPending(userId: string): Observable<Friendship[]> {
+      return this.http.get<Friendship[]>(`${this.apiUrl}/pending/${userId}`);
   }
 }
