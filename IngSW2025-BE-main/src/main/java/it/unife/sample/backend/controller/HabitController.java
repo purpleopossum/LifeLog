@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.unife.sample.backend.dto.HabitUpdateDTO;
 import it.unife.sample.backend.model.Habit;
 import it.unife.sample.backend.model.User;
 import it.unife.sample.backend.service.HabitService;
-import it.unife.sample.backend.service.UserService;
 
 @RestController
 @RequestMapping("/api/habits")
@@ -27,9 +26,6 @@ public class HabitController {
 
     @Autowired
     private HabitService service;
-    
-    @Autowired
-    private UserService userService;
 
     @GetMapping
     public List<Habit> getAll() {
@@ -48,18 +44,14 @@ public class HabitController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody HabitUpdateDTO dto) {
+    public ResponseEntity<?> create(@RequestBody Habit habit, @RequestParam UUID userId) {
         try {
-            UUID userUUID = UUID.fromString(dto.getUserId());
-            Optional<User> userOpt = userService.findById(userUUID);
-            if (userOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body("User not found");
-            }
             Habit entity = new Habit();
-            entity.setTitle(dto.getTitle());
-            entity.setDescription(dto.getDescription());
-            entity.setPartOfDay(dto.getPartOfDay());
-            entity.setUser(userOpt.get());
+            entity.setTitle(habit.getTitle());
+            entity.setDescription(habit.getDescription());
+            entity.setPartOfDay(habit.getPartOfDay());
+            entity.setUser(new User());
+            entity.getUser().setId(userId);
             if (entity.getDescription() == null) entity.setDescription("");
             if (entity.getPartOfDay() == null) entity.setPartOfDay("");
             entity.setDeleted(false);
@@ -72,21 +64,21 @@ public class HabitController {
 
 
     @PutMapping("/{id}")
-public ResponseEntity<Habit> update(@PathVariable UUID id, @RequestBody HabitUpdateDTO dto) {
+    public ResponseEntity<Habit> update(@PathVariable UUID id, @RequestBody Habit habit) {
 
-    Optional<Habit> habitOpt = service.findById(id);
-    if (habitOpt.isEmpty()) {
-        return ResponseEntity.notFound().build();
+        Optional<Habit> habitOpt = service.findById(id);
+        if (habitOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Habit entity = habitOpt.get();
+
+        entity.setTitle(habit.getTitle());
+        entity.setDescription(habit.getDescription());
+        entity.setPartOfDay(habit.getPartOfDay());
+
+        return ResponseEntity.ok(service.save(entity));
     }
-
-    Habit entity = habitOpt.get();
-
-    entity.setTitle(dto.getTitle());
-    entity.setDescription(dto.getDescription());
-    entity.setPartOfDay(dto.getPartOfDay());
-
-    return ResponseEntity.ok(service.save(entity));
-}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {

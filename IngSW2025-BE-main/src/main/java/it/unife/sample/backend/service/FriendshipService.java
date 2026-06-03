@@ -1,6 +1,5 @@
 package it.unife.sample.backend.service;
 
-import it.unife.sample.backend.dto.FriendDTO;
 import it.unife.sample.backend.model.Friendship;
 import it.unife.sample.backend.model.User;
 import it.unife.sample.backend.repository.FriendshipRepository;
@@ -130,27 +129,22 @@ public class FriendshipService {
         return friendshipRepository.save(friendship);
     }
 
-    public FriendDTO getFriend(UUID userId) {
+    public Friendship getFriend(UUID userId) {
         if (!userRepository.existsById(userId)) {
             throw new IllegalArgumentException("User not found");
         }
 
         return friendshipRepository.findAcceptedFriendshipByUserId(userId, ACCEPTED)
-                .map(friendship -> {
-                    User friend = friendship.getSender().getId().equals(userId) ? friendship.getReceiver() : friendship.getSender();
-                    return toFriendDTO(friendship, friend);
-                })
                 .orElse(null);
     }
 
-    public List<FriendDTO> getPendingRequests(UUID userId) {
+    public List<Friendship> getPendingRequests(UUID userId) {
         if (!userRepository.existsById(userId)) {
             throw new IllegalArgumentException("User not found");
         }
 
         return friendshipRepository.findByReceiverIdAndStatus(userId, PENDING)
                 .stream()
-                .map(f -> toFriendDTO(f, f.getSender()))
                 .toList();
     }
 
@@ -160,14 +154,4 @@ public class FriendshipService {
                 .orElse(false);
     }
 
-    private FriendDTO toFriendDTO(Friendship friendship, User user) {
-        FriendDTO dto = new FriendDTO();
-        dto.setFriendshipId(friendship.getId().toString());
-        dto.setUserId(user.getId().toString());
-        dto.setUsername(user.getUsername());
-        dto.setFriendCode(user.getFriendCode());
-        dto.setStatus(friendship.getStatus());
-        dto.setCreatedAt(friendship.getCreatedAt());
-        return dto;
-    }
 }

@@ -1,5 +1,6 @@
 package it.unife.sample.backend.controller;
 
+import it.unife.sample.backend.model.EncouragementMessageType;
 import it.unife.sample.backend.model.User;
 import it.unife.sample.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,11 +62,46 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> update(@PathVariable UUID id, @RequestBody User entity) {
-        if (!service.findById(id).isPresent()) {
+        Optional<User> existingOpt = service.findById(id);
+        if (existingOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        entity.setId(id);
-        return ResponseEntity.ok(service.save(entity));
+
+        User existing = existingOpt.get();
+        existing.setUsername(entity.getUsername());
+        existing.setEmail(entity.getEmail());
+        existing.setPassword(entity.getPassword());
+        existing.setFriendCode(entity.getFriendCode());
+
+        if (entity.getMessage() != null) {
+            existing.setMessage(entity.getMessage());
+        }
+
+        return ResponseEntity.ok(service.save(existing));
+    }
+
+    @PutMapping("/{id}/message")
+    public ResponseEntity<User> setMessage(@PathVariable UUID id, @RequestBody EncouragementMessageType message) {
+        Optional<User> existingOpt = service.findById(id);
+        if (existingOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User existing = existingOpt.get();
+        existing.setMessage(message);
+        return ResponseEntity.ok(service.save(existing));
+    }
+
+    @DeleteMapping("/{id}/message")
+    public ResponseEntity<User> clearMessage(@PathVariable UUID id) {
+        Optional<User> existingOpt = service.findById(id);
+        if (existingOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User existing = existingOpt.get();
+        existing.setMessage(null);
+        return ResponseEntity.ok(service.save(existing));
     }
 
     @DeleteMapping("/{id}")

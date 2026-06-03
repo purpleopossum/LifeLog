@@ -20,6 +20,9 @@ public class User {
     
     @Column(unique = true, length = 6)
     private String friendCode;
+
+    @Enumerated(EnumType.STRING)
+    private EncouragementMessageType message;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
