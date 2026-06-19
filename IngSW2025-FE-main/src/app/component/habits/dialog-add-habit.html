@@ -7,15 +7,15 @@
       <textarea id="description"  [(ngModel)]="description" name="description" maxlength="100" placeholder="DESCRIPTION"></textarea>
     </div>
     <select matInput [(ngModel)]="partOfDay" name="partOfDay" >
-        <option value="Any" disabled selected hidden>Periodo del Giorno</option>
-        <option value="Any">QUALSIASI</option>
-        <option value="Morning">MATTINA</option>
-        <option value="Evening">POMERIGGIO</option>
-        <option value="Night">SERA</option>
+        <option value="Any" disabled selected hidden>Time of the day</option>
+        <option value="Any">ANYTIME</option>
+        <option value="Morning">MORNING</option>
+        <option value="Evening">AFTERNOON</option>
+        <option value="Night">EVENING</option>
       </select>
     <div class="actions">
-      <button type="button" (click)="onNoClick()">Annulla</button>
-      <button type="submit" [disabled]="form.invalid" (click)="save()">Salva</button>
+      <button type="button" (click)="onNoClick()">Cancel</button>
+      <button type="submit" [disabled]="form.invalid" (click)="save()">Save</button>
     </div>
   </form>
 </div>

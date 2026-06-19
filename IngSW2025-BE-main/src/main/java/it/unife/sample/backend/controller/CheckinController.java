@@ -57,7 +57,9 @@ public class CheckinController {
         entity.setStatus(checkin.getStatus());
         entity.setNote(checkin.getNote());
         entity.setMood(checkin.getMood());
-        entity.setDate(checkin.getDate());
+        if (checkin.getDate() != null) {
+            entity.setDate(checkin.getDate());
+        }
 
         return ResponseEntity.ok(service.save(entity));
     }

@@ -14,7 +14,7 @@ import { UserService } from '../../service/user.service';
 })
 
 export class LoginComponent {
-  username: string = '';
+  identifier: string = '';
   password: string = '';
   errorMessage: string = '';
 
@@ -25,18 +25,18 @@ export class LoginComponent {
   
 
   async login() {
-    this.userService.getByUsername(this.username).subscribe({
+    this.userService.login(this.identifier.trim(), this.password).subscribe({
       next: (user) => {
-        if (user && user.password === this.password) {
-          localStorage.setItem('user', JSON.stringify(user));
-          this.authService.login(user);
-          this.router.navigate(['/habits']);
-        } else {
-          this.errorMessage = 'Password errata';
-        }
+        localStorage.setItem('user', JSON.stringify(user));
+        this.authService.login(user);
+        this.router.navigate(['/habits']);
       },
-      error: () => {
-        this.errorMessage = 'Utente non trovato';
+      error: (err) => {
+        if (err.status === 401) {
+            this.errorMessage = 'Wrong credentials';
+        } else {
+            this.errorMessage = 'Error connecting to the server';
+        }
       }
     });
   }

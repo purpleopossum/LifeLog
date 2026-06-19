@@ -27,6 +27,15 @@ export class UserService {
     return this.http.get<User>(`${this.apiUrl}/email/${email}`);
   }
 
+  getIdentifier(identifier: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/identifier/${identifier}`);
+  }
+
+  login(identifier: string, password: string): Observable<User> {
+    const body = { identifier, password };
+    return this.http.post<User>(`${this.apiUrl}/login`, body);
+  }
+
   create(entity: User): Observable<User> {
     return this.http.post<User>(this.apiUrl, entity);
   }
@@ -52,5 +61,9 @@ export class UserService {
 
   clearMessage(id: string): Observable<User> {
     return this.http.delete<User>(`${this.apiUrl}/${id}/message`);
+  }
+
+  regenerateFriendCode(userId: string): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${userId}/regenerate-friend-code`, {});
   }
 }

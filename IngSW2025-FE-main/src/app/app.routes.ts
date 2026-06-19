@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomePageComponent } from './component/home-page/home-page.component';
 import { HabitsComponent } from './component/habits/habits.component';
 import { LoginComponent } from './component/login/login.component';
 import { RegisterComponent } from './component/register/register.component';
@@ -11,7 +10,6 @@ import { StatsComponent } from './component/stats/stats.component';
 
 
 export const routes: Routes = [
-  { path: '', component: HomePageComponent },
   { path: 'habit', component: HabitsComponent, canActivate: [AuthGuard] },
   { path: 'notes', component: NotesComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },

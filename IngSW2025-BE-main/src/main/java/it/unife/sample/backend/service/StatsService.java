@@ -13,16 +13,19 @@ import org.springframework.stereotype.Service;
 import it.unife.sample.backend.model.Checkin;
 import it.unife.sample.backend.model.Stats;
 import it.unife.sample.backend.repository.CheckinRepository;
+import it.unife.sample.backend.repository.HabitRepository;
 
 @Service
 public class StatsService {
 
 	@Autowired
 	private CheckinRepository checkinRepository;
+	@Autowired
+	private HabitRepository habitRepository;
 
 	public Stats getByUserId(UUID userId) {
 		List<Checkin> checkins = checkinRepository.findByHabitUserId(userId);
-		int numHabits = (int) checkins.stream().map(c -> c.getHabit().getId()).distinct().count();
+		int numHabits = habitRepository.findByUserId(userId).size();
 		return buildStats(checkins, numHabits);
 	}
 
@@ -46,12 +49,12 @@ public class StatsService {
 		stats.setDaysWithCheckin(uniqueDays.size());
 		stats.setLongestStreak(calculateLongestStreak(uniqueDays));
 		stats.setCurrentStreak(calculateCurrentStreak(uniqueDaysSet));
-		stats.setCompletedPercentageLast7Days(calculateLast7DaysStatusPercentage(checkins, true));
-		stats.setSkippedPercentageLast7Days(calculateLast7DaysStatusPercentage(checkins, false));
+		stats.setCompletedPercentageLast7Days(calculateLast7DaysStatusPercentage(checkins, true, numHabits));
+		stats.setSkippedPercentageLast7Days(calculateLast7DaysStatusPercentage(checkins, false, numHabits));
 		stats.setTotalWeekCompleted(countLast7Days(checkins, "completed"));
 		stats.setTotalWeekSkipped(countLast7Days(checkins, "skipped"));
 		stats.setTotalWeekCheckins(numHabits * 7);
-		stats.setCompletedLastSevenDays(getCompletedLast7Days(checkins));
+		stats.setCompletedLastSevenDays(getCompletedLast7Days(checkins, numHabits));
 		return stats;
 	}
 
@@ -81,7 +84,7 @@ public class StatsService {
         return count;
     }
 
-private List<Integer> getCompletedLast7Days(List<Checkin> checkins) {
+private List<Integer> getCompletedLast7Days(List<Checkin> checkins, int numHabits) {
     LocalDate today = LocalDate.now();
     List<Integer> result = new ArrayList<>();
 
@@ -100,17 +103,26 @@ private List<Integer> getCompletedLast7Days(List<Checkin> checkins) {
             }
         }
 
-        result.add(count);
+
+        if (numHabits <= 0) {
+            result.add(0);
+        } else {
+            int percentage = (int) Math.round((count * 100.0) / numHabits);
+            result.add(percentage);
+        }
     }
 
     return result;
 }
 
-	private double calculateLast7DaysStatusPercentage(List<Checkin> checkins, boolean completed) {
+	private double calculateLast7DaysStatusPercentage(List<Checkin> checkins, boolean completed, int numHabits) {
+		if (numHabits <= 0) {
+        	return 0.0;
+    	}
 		LocalDate today = LocalDate.now();
 		LocalDate start = today.minusDays(6);
 
-		int totalInLast7Days = 0;
+
 		int matchingStatus = 0;
 
 		for (Checkin checkin : checkins) {
@@ -119,7 +131,7 @@ private List<Integer> getCompletedLast7Days(List<Checkin> checkins) {
 				continue;
 			}
 
-			totalInLast7Days++;
+
 			String status = checkin.getStatus() == null ? "" : checkin.getStatus().trim().toLowerCase();
 
 			if (completed && (status.equals("completed"))) {
@@ -131,11 +143,8 @@ private List<Integer> getCompletedLast7Days(List<Checkin> checkins) {
 			}
 		}
 
-		if (totalInLast7Days == 0) {
-			return 0.0;
-		}
 
-		return (matchingStatus * 100.0) / totalInLast7Days;
+		return (matchingStatus * 100.0) / (numHabits * 7);
 	}
 
 	private int calculateLongestStreak(List<LocalDate> sortedDates) {

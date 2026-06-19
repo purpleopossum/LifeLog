@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Habit, HabitUpdateDTO } from '../dto/habit.model';
 @Injectable({
@@ -25,7 +25,8 @@ export class HabitService {
 
 
   create(habit: HabitUpdateDTO): Observable<Habit> {
-    return this.http.post<Habit>(`${this.apiUrl}`, habit);
+      const params = new HttpParams().set('userId', habit.userId);
+    return this.http.post<Habit>(`${this.apiUrl}`, habit, { params });
   }
 
   update(id: string, habit: HabitUpdateDTO): Observable<Habit> {

@@ -4,7 +4,7 @@
   </div>
 
   <div class="carousel-container">
-    <button class="arrow" (click)="moveSelection(-1)">‹</button>
+    <button class="arrow" (click)="moveSelection(-1)" [disabled]="isMinLimit">‹</button>
 
     <div class="days">
       <div
@@ -17,6 +17,6 @@
       </div>
     </div>
 
-    <button class="arrow" (click)="moveSelection(1)">›</button>
+    <button class="arrow" (click)="moveSelection(1)" [disabled]="isMaxLimit">›</button>
   </div>
 </div>

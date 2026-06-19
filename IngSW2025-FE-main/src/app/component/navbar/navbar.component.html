@@ -12,7 +12,7 @@
           <a [routerLink]="['/stats']">Stats</a>
 
 
-          <a (click)="logout()">Logout</a>
+          <a (click)="logout()" class="logout-btn">Logout</a>
         </div>
       </li>
       <ng-container *ngIf="!loggedOn">

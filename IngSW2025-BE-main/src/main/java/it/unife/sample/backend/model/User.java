@@ -16,6 +16,7 @@ public class User {
     private UUID id;
     private String username;
     private String email;
+    @JsonIgnore
     private String password;
     
     @Column(unique = true, length = 6)

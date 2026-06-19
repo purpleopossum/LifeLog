@@ -17,6 +17,10 @@ import { CheckinService } from '../../service/checkin.service';
 import { DayCarouselComponent } from '../day-carousel/day-carousel.component';
 import { HabitUpdateDTO } from '../../dto/habit.model';
 
+interface HabitViewModel extends Habit {
+    currentCheckin?: Checkin | undefined;
+}
+
 @Component({
   selector: 'app-habits',
   imports: [
@@ -34,9 +38,10 @@ export class HabitsComponent implements OnInit {
   habits: Habit[] = [];
   checkins: Checkin[] = [];
   editingCheckinId: string | null = null;
+  editingCheckinClone: Checkin | null = null;
   today = new Date();
   selectedFilter: string = 'All';
-  filteredHabits: Habit[] = [];
+  filteredHabits: HabitViewModel[] = [];
   filteredHabitsAny: Habit[] = [];
   selectedStatus: string = 'All';
   readonly dialog = inject(MatDialog);
@@ -70,17 +75,24 @@ export class HabitsComponent implements OnInit {
   }
 
   applyFilters() {
-    this.filteredHabits = this.habits.filter(habit => {
-      const matchesPartOfDay = 
-          this.selectedFilter === 'All' || habit.partOfDay === this.selectedFilter;
-      
-      const checkin = this.getCheckinForHabitAndDate(habit.id!, this.selectedDate);
-      const matchesStatus = 
-        this.selectedStatus === 'All' ||
-        (checkin && checkin.status === this.selectedStatus); // Assumendo status 'COMPLETED' o 'SKIPPED'
+      const habitsMapped: HabitViewModel[] = this.habits.map(habit => {
+          const checkin = this.checkins.find(c => c.habit.id === habit.id && c.date === this.selectedDate);
+          return {
+              ...habit,
+              currentCheckin: checkin
+          };
+      });
 
-      return matchesPartOfDay && matchesStatus;
-    });
+      this.filteredHabits = habitsMapped.filter(habit => {
+          const matchesPartOfDay = 
+              this.selectedFilter === 'All' || habit.partOfDay === this.selectedFilter;
+
+          const matchesStatus = 
+              this.selectedStatus === 'All' ||
+              (habit.currentCheckin && habit.currentCheckin.status === this.selectedStatus);
+
+          return matchesPartOfDay && matchesStatus;
+      });
   }
 
 
@@ -92,6 +104,10 @@ export class HabitsComponent implements OnInit {
   getCheckinForHabitAndDate(habitId: string, date: string) {
     return this.checkins.find(c => c.habit.id === habitId && c.date === date);
   }
+
+  trackByHabitId(_index: number, habit: HabitViewModel): string {
+      return habit.id!;
+    }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddHabit, {});
@@ -115,6 +131,8 @@ export class HabitsComponent implements OnInit {
     });
   }
 
+ 
+
   async updateCheckin(habit: Habit, status: string) {
     try {
       let checkin = this.getCheckinForHabitAndDate(habit.id!, this.selectedDate);
@@ -124,7 +142,8 @@ export class HabitsComponent implements OnInit {
           status: status,
           note: '',
           mood: 0,
-          date: this.selectedDate
+          date: this.selectedDate,
+          habit: habit,
         } as Checkin;
         await lastValueFrom(this.checkinService.create(habit.id!, checkin));
       } else {
@@ -138,20 +157,47 @@ export class HabitsComponent implements OnInit {
       await this.loadData();
     } catch (error) {
       console.error('Error updating checkin:', error);
-      alert('Errore nell\'aggiornamento dell\'abitudine');
+      alert('Error updating checkin');
     }
   }
   
-  async saveCheckinEdit(checkin: Checkin) {
-    await lastValueFrom(this.checkinService.update(checkin.id!, { 
-      status: checkin.status,
-      note: checkin.note ?? '',
-      mood:checkin.mood ?? 0
-    }));
-    this.editingCheckinId = null;
-    await this.loadData();
+  startEditing(checkin: Checkin) {
+    this.editingCheckinId = checkin.id!;
+    this.editingCheckinClone = JSON.parse(JSON.stringify(checkin));
   }
-  async deleteItem(id: string): Promise<void> {
+  async saveCheckinEdit() {
+  if (!this.editingCheckinClone) return;
+
+  try {
+    await lastValueFrom(this.checkinService.update(this.editingCheckinClone.id!, { 
+        status: this.editingCheckinClone.status,
+        note: this.editingCheckinClone.note ?? '',
+        mood: this.editingCheckinClone.mood ?? 0,
+    }));
+
+    const index = this.checkins.findIndex(c => c.id === this.editingCheckinClone!.id);
+    if (index !== -1) {
+        if (!this.checkins[index]) return;
+        const originalCheckin = this.checkins[index];
+
+      this.checkins[index] = { 
+        ...originalCheckin, 
+        note: this.editingCheckinClone.note ?? '',
+        mood: this.editingCheckinClone.mood ?? 0,
+        status: this.editingCheckinClone.status,
+      };
+    }
+
+    this.editingCheckinId = null;
+    this.editingCheckinClone = null;
+    
+    this.applyFilters(); 
+  } catch (error){
+    console.error('Errore saving note:', error);
+    alert('Error saving note');
+  }
+}
+    async deleteItem(id: string): Promise<void> {
     this.editingCheckinId = null;
     await lastValueFrom(this.checkinService.delete(id));
     await this.loadData();

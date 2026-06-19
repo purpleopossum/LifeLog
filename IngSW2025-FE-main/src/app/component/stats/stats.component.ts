@@ -147,11 +147,26 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
           data: {
               labels: this.getLast7Days(),
               datasets: [{
-                  label: 'Completed',
+                  label: 'Completion %',
                   data: this.stats.completedLastSevenDays ?? [],
                   borderColor: '#0094fd',
                   tension: 0.3
               }]
+          },
+          options: {
+              responsive: true,
+              scales: {
+                  y: {
+                      min: 0,
+                      max: 100,
+                      ticks: {
+                          stepSize: 25,                          
+                          callback: function(value) {
+                              return value + '%';
+                          }
+                      }
+                  }
+              }
           }
       });
 
@@ -180,12 +195,28 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
               data: {
                   labels: this.getLast7Days(),
                   datasets: [{
-                      label: 'Completed',
+                      label: 'Completion %',
                       data: this.friendStats.completedLastSevenDays ?? [],
                       borderColor: '#0094fd',
                       tension: 0.3
                   }]
+              },
+              options: {
+                  responsive: true,
+                  scales: {
+                      y: {
+                          min: 0,
+                          max: 100,
+                          ticks: {
+                              stepSize: 25,                          
+                              callback: function(value) {
+                                  return value + '%';
+                              }
+                          }
+                      }
+                  }
               }
+
           });
 
       }
@@ -284,5 +315,20 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
         .catch(err => {
             console.error('Copy failed', err)
         });
+   }
+
+   regenerateFriendCode() {
+    if (this.currentUser) {
+        this.userService.regenerateFriendCode(this.currentUser.id).subscribe({
+            next: (updatedUser) => {
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                alert("New friend code succesfully generated!");
+            },
+            error: (err) => {
+                console.error("Error during friend code regeneration", err);
+                alert("An error has occurred, retry.");
+            }
+        })
+    }
    }
 }

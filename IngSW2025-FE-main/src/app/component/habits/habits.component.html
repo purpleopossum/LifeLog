@@ -40,16 +40,14 @@
 <!-- HABITS LIST -->
 <div class="habit-card-container">
 
-  <div class="habit-card" *ngFor="let habit of filteredHabits">
+  <div class="habit-card" *ngFor="let habit of filteredHabits; trackBy: trackByHabitId">
 
-    <!-- CHECKIN ESISTENTE -->
-    <ng-container *ngIf="getCheckinForHabitAndDate(habit.id!, selectedDate) as checkin; else noCheckin">
+    <ng-container *ngIf="habit.currentCheckin as checkin; else noCheckin">
 
-      <!-- EDIT MODE -->
-      <ng-container *ngIf="editingCheckinId === checkin.id; else viewMode">
+      <ng-container *ngIf="editingCheckinId === checkin.id && editingCheckinClone">
 
         <textarea
-          [(ngModel)]="checkin.note"
+          [(ngModel)]="editingCheckinClone.note"
           placeholder="Aggiungi una nota..."
           class="note"
           maxlength="140">
@@ -67,23 +65,22 @@
           type="range"
           min="1"
           max="5"
-          [(ngModel)]="checkin.mood"
+          [(ngModel)]="editingCheckinClone.mood"
           class="slider">
 
         <div class="actions">
-          <button type="button" (click)="editingCheckinId = null">
+          <button type="button" (click)="editingCheckinId = null; editingCheckinClone = null;">
             Cancel
           </button>
 
-          <button type="button" (click)="saveCheckinEdit(checkin)">
+          <button type="button" (click)="saveCheckinEdit()">
             Save
           </button>
         </div>
 
       </ng-container>
 
-      <!-- VIEW MODE -->
-      <ng-template #viewMode>
+      <ng-container *ngIf="editingCheckinId !== checkin.id">
 
         <div class="title-section"
           [class.completed-title]="checkin.status === 'COMPLETED'"
@@ -104,20 +101,18 @@
 
           <button type="button" (click)="deleteItem(checkin.id!)">
             <img class="time" src="go-back.png">
-
           </button>
 
-          <button type="button" (click)="editingCheckinId = checkin.id!">            
+          <button type="button" (click)="startEditing(checkin)">            
             <img class="time" src="note.png">
           </button>
 
         </div>
 
-      </ng-template>
+      </ng-container>
 
     </ng-container>
 
-    <!-- NO CHECKIN -->
     <ng-template #noCheckin>
 
       <div class="title-section">
@@ -136,7 +131,6 @@
 
         <button type="button" (click)="updateCheckin(habit, 'SKIPPED')">
           <img class="time" src="skip.png">
-
         </button>
 
         <button type="button" (click)="updateCheckin(habit, 'COMPLETED')">

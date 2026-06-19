@@ -1,15 +1,25 @@
 package it.unife.sample.backend.controller;
 
-import it.unife.sample.backend.model.EncouragementMessageType;
-import it.unife.sample.backend.model.User;
-import it.unife.sample.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.Map;
+
+import it.unife.sample.backend.model.EncouragementMessageType;
+import it.unife.sample.backend.model.User;
+import it.unife.sample.backend.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
@@ -48,6 +58,39 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/identifier/{identifier}")
+    public ResponseEntity<User> getByIdentifier(@PathVariable String identifier) {
+        User entity = service.findByidentifier(identifier);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {
+
+        String identifier = payload.get("identifier");
+        String password = payload.get("password");
+
+        if (identifier == null || password == null) {
+            return ResponseEntity.badRequest().body("Dati mancanti");
+        }
+
+        User entity = service.findByidentifier(identifier);
+
+        if (entity == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
+        }
+
+        if (!entity.getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password errata");
+        }
+
+        return ResponseEntity.ok(entity);
     }
 
     @PostMapping
@@ -106,4 +149,11 @@ public class UserController {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/regenerate-friend-code")
+    public ResponseEntity<User> regenerateFriendCode(@PathVariable UUID id) {
+        User updatedUser = service.regenerateFriendCode(id);
+
+        return ResponseEntity.ok(updatedUser);
+}
 }

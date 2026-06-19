@@ -1,15 +1,16 @@
 package it.unife.sample.backend.service;
 
-import it.unife.sample.backend.model.EncouragementMessageType;
-import it.unife.sample.backend.model.User;
-import it.unife.sample.backend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import it.unife.sample.backend.model.EncouragementMessageType;
+import it.unife.sample.backend.model.User;
+import it.unife.sample.backend.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -36,6 +37,13 @@ public class UserService {
 
     public User findByEmail(String email) {
         return repository.findByEmail(email);
+    }
+
+    public User findByidentifier(String identifier) {
+        if(identifier == null) {
+            return null;
+        }
+        return repository.findByUsernameOrEmail(identifier, identifier).orElse(null);
     }
 
     public User findByFriendCode(String friendCode) {
@@ -85,6 +93,16 @@ public class UserService {
 
         user.setFriendCode(generateUniqueFriendCode());
     }
+
+    public User regenerateFriendCode(UUID userId) {
+    User user = repository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+    
+    String newCode = generateUniqueFriendCode();
+    user.setFriendCode(newCode);
+    
+    return repository.save(user);
+}
 
     private String generateUniqueFriendCode() {
         for (int attempt = 0; attempt < MAX_CODE_ATTEMPTS; attempt++) {

@@ -51,12 +51,26 @@ export class DayCarouselComponent {
     newDate.setDate(newDate.getDate() + delta);
 
     const diff = this.getDateDiffInDays(newDate, this.currentDate);
-    if (diff < -14 || diff > 14) {
+    if (diff < -7 || diff > 1) {
       return;
     }
 
     this.selectedDate = newDate;
     this.dateChanged.emit(this.selectedDate.toISOString().split('T')[0]);
+  }
+
+  get isMaxLimit(): boolean {
+    const nextDate = new Date(this.selectedDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+    const diff = this.getDateDiffInDays(nextDate, this.currentDate);
+    return diff > 1;
+  }
+
+  get isMinLimit(): boolean {
+    const prevDate = new Date(this.selectedDate);
+    prevDate.setDate(prevDate.getDate() - 1);
+    const diff = this.getDateDiffInDays(prevDate, this.currentDate);
+    return diff < -7;
   }
 
   private getDateDiffInDays(a: Date, b: Date): number {

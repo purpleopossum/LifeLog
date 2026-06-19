@@ -1,15 +1,15 @@
 <div class="notes-page">
-  <h2>Le tue note</h2>
+  <h2>Your notes</h2>
 
   <div *ngIf="notesByDate.length === 0">
-    Nessuna nota trovata.
+    No notes found.
   </div>
 
   <div *ngFor="let group of notesByDate" class="date-group">
     <h3>{{ group.date | date: 'fullDate' }}</h3>
     <div *ngFor="let checkin of group.checkins" class="note-card">
       <div class="note-header">
-        <span class="note-habit">{{ checkin.habit.title || 'Habit sconosciuto' }}</span>
+        <span class="note-habit">{{ checkin.habit.title || 'Unknown habit' }}</span>
         <span class="note-mood">{{ getMoodIcon(checkin.mood ?? 0) }}</span>
       </div>
       <div class="note-text">{{ checkin.note }}</div>

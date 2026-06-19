@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Checkin } from '../dto/checkin.model';
 import { Observable } from 'rxjs';
 
@@ -19,16 +19,13 @@ export class CheckinService {
     return this.http.post<Checkin>(`${this.apiUrl}?habitId=${habitId}`, checkin);
   }
 
-  getByHabitAndDate(habitId: string, date: string): Observable<Checkin> {
-    return this.http.get<Checkin>(`${this.apiUrl}/habit/${habitId}/date/${date}`);
-  }
- 
   getByUserAndDate(userId: string, date: string): Observable<Checkin[]>{
-    return this.http.get<Checkin[]>(`${this.apiUrl}/user/${userId}/date/${date}`, );
+      const params = new HttpParams().set('date', date);
+    return this.http.get<Checkin[]>(`${this.apiUrl}/user/${userId}`, { params });
   }
 
   getByUser(userId: string): Observable<Checkin[]>{
-    return this.http.get<Checkin[]>(`${this.apiUrl}/user/${userId}`, );
+    return this.http.get<Checkin[]>(`${this.apiUrl}/user/${userId}`);
   }
 
   update(id: string, checkin: any): Observable<Checkin> {

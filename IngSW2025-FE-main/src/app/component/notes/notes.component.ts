@@ -24,10 +24,8 @@ export class NotesComponent implements OnInit {
   ngOnInit() {
     const user = JSON.parse(localStorage.getItem('user')!);
     this.checkinService.getByUser(user.id).subscribe((checkins: Checkin[]) => {
-      // filtro solo quelli con note non vuote e non null
       const filtered = checkins.filter(c => c.note && c.note.trim().length > 0);
 
-      // raggruppo per data
       const grouped: { [date: string]: Checkin[] } = {};
       filtered.forEach(checkin => {
         const d = checkin.date.split('T')[0]; // YYYY-MM-DD
@@ -36,7 +34,6 @@ export class NotesComponent implements OnInit {
         grouped[d].push(checkin);
       });
 
-      // converto in array ordinato per data decrescente
       this.notesByDate = Object.entries(grouped)
         .map(([date, checkins]) => ({ date, checkins }))
         .sort((a, b) => b.date.localeCompare(a.date));

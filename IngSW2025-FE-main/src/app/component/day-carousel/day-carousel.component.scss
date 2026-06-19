@@ -28,6 +28,12 @@
   cursor: pointer;
   user-select: none;
   padding: 5px 8px 5px 8px;
+
+  &:disabled {
+    background-color: #121212;
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
 .days {
@@ -56,4 +62,3 @@
   background-color: #007bff;
   color: white;
 }
-
