@@ -2,6 +2,8 @@ package it.unife.sample.backend.service;
 
 import it.unife.sample.backend.model.Habit;
 import it.unife.sample.backend.repository.HabitRepository;
+import jakarta.transaction.Transactional;
+import it.unife.sample.backend.repository.CheckinRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ public class HabitService {
 
     @Autowired
     private HabitRepository repository;
+    @Autowired
+    private CheckinRepository checkinRepository;
 
     public List<Habit> findAll() {
         return repository.findAll();
@@ -32,7 +36,9 @@ public class HabitService {
         return repository.save(habit);
     }
 
+    @Transactional
     public void deleteById(UUID id) {
+        checkinRepository.deleteByHabitId(id);
         repository.deleteById(id);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*; 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,6 +56,7 @@ public class EntryController {
             }
             entity.setUser(userOpt.get());
             entity.setDeleted(false);
+            entity.setEntryDate(LocalDate.now());
             return ResponseEntity.ok(service.save(entity));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid userId format");

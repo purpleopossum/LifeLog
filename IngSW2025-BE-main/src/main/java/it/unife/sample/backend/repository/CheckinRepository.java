@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import it.unife.sample.backend.model.Checkin;
 
 @Repository
@@ -23,4 +25,8 @@ public interface CheckinRepository extends JpaRepository<Checkin, UUID> {
 
     @EntityGraph(attributePaths = {"habit"})
     List<Checkin> findByHabitIdAndDate(UUID habitId, LocalDate date);
+
+    @Modifying
+    @Query("DELETE FROM Checkin c WHERE c.habit.id = :habitId")
+    void deleteByHabitId(UUID habitId);
 }

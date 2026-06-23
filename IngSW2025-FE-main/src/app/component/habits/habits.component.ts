@@ -286,4 +286,23 @@ export class DialogEditHabit {
     await lastValueFrom(this.habitService.update(this.data.id!, updatedHabit));
     this.dialogRef.close();
   }
+
+  async delete(): Promise<void> {
+  if (!this.data || !this.data.id) {
+    console.error("Missing id");
+    return;
+  }
+
+  const confirmDelete = confirm(`Are you sure you want to delete "${this.title}"?`);
+  if (!confirmDelete) return;
+
+  try {
+    await lastValueFrom(this.habitService.delete(this.data.id));
+    
+    this.dialogRef.close();
+  } catch (error) {
+    console.error("Error deleting habit:", error);
+    alert("An error has occurred. Retry.");
+  }
+}
 }
