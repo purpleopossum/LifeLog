@@ -33,7 +33,7 @@ export class LoginComponent {
       },
       error: (err) => {
         if (err.status === 401) {
-            this.errorMessage = 'Wrong credentials';
+            this.errorMessage = err.error || 'Wrong credentials';
         } else {
             this.errorMessage = 'Error connecting to the server';
         }

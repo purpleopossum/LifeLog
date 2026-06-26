@@ -77,17 +77,13 @@ public class UserController {
         String password = payload.get("password");
 
         if (identifier == null || password == null) {
-            return ResponseEntity.badRequest().body("Dati mancanti");
+            return ResponseEntity.badRequest().body("Missing data");
         }
 
         User entity = service.findByidentifier(identifier);
 
-        if (entity == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato");
-        }
-
-        if (!entity.getPassword().equals(password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password errata");
+        if (entity == null || !entity.getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong credentials");
         }
 
         return ResponseEntity.ok(entity);
