@@ -295,6 +295,9 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.friendship) {
         return;
     }
+    const confirmDelete = confirm("Are you sure you want to remove your friend?");
+    if (!confirmDelete) return;
+
     this.friendService.removeFriendship(this.friendship.id)
         .subscribe(() => {
             this.friendship = null;
@@ -305,7 +308,6 @@ export class StatsComponent implements OnInit, AfterViewInit, OnDestroy {
     
    copyFriendCode() {
     const code = this.currentUser?.friendCode;
-
     if (!code) return;
 
     navigator.clipboard.writeText(code)
