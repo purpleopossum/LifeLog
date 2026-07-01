@@ -1,0 +1,43 @@
+<div class="habit-form">
+  <div class="title-container">
+    <input 
+      type="text" 
+      [(ngModel)]="title" 
+      placeholder="EDIT CHALLENGE TITLE" 
+      required
+    />
+  </div>
+
+  <textarea 
+    [(ngModel)]="description" 
+    placeholder="Edit description..."
+  ></textarea>
+
+  <div class="checkins-section">
+    <h4>Tappe della Sfida (Milestones)</h4>
+    
+    <div class="milestone-input-group">
+      <input 
+        type="text" 
+        [(ngModel)]="newMilestoneDescription" 
+        placeholder="Es: Read 10 books"
+        (keyup.enter)="addMilestoneToForm()"
+      />
+      <button type="button" (click)="addMilestoneToForm()">+</button>
+    </div>
+
+    @for (item of milestonesFormList; track $index) {
+      <div class="checkin-item">
+        <label>
+          <span class="order">#{{ $index + 1 }}</span> {{ item }}
+        </label>
+        <span class="remove-btn" (click)="removeMilestoneFromForm($index)">×</span>
+      </div>
+    }
+  </div>
+
+  <div class="actions">
+    <button type="button" (click)="goBack()">CANCEL</button>
+    <button type="button" [disabled]="!title.trim()" (click)="submitChallenge()">UPDATE CHALLENGE</button>
+  </div>
+</div>

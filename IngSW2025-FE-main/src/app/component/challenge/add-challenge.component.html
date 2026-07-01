@@ -1,0 +1,48 @@
+<div class="habit-form">
+  <div class="title-container">
+    <input 
+      type="text" 
+      [(ngModel)]="title" 
+      placeholder="CHALLENGE TITLE" 
+      required
+    />
+  </div>
+
+  <textarea 
+    [(ngModel)]="description" 
+    placeholder="Add a description for your challenge..."
+  ></textarea>
+
+  <div class="checkins-section">
+    <h4>Tappe della Sfida (Milestones)</h4>
+    
+    <div class="milestone-input-group">
+      <input 
+        type="text" 
+        [(ngModel)]="newMilestoneDescription" 
+        placeholder="Es: Read 10 books"
+        (keyup.enter)="addMilestoneToForm()"
+      />
+      <button type="button" (click)="addMilestoneToForm()">+</button>
+    </div>
+
+    @for (item of milestonesFormList; track $index) {
+      <div class="checkin-item">
+        <label>
+          <span class="order">#{{ $index + 1 }}</span> {{ item }}
+        </label>
+        <span class="remove-btn" (click)="removeMilestoneFromForm($index)">×</span>
+      </div>
+    }
+  </div>
+
+    @if (milestonesFormList.length === 0) {
+        <p class="validation-error-text" style="color: #e74c3c; font-size: 0.85 rem; margin-top: 0.5rem;">
+            * Add milestones to your challenge!
+        </p>
+    }
+  <div class="actions">
+    <button type="button" (click)="goBack()">CANCEL</button>
+    <button type="button" [disabled]="!title.trim() || milestonesFormList.length === 0" (click)="submitChallenge()">SAVE CHALLENGE</button>
+  </div>
+</div>

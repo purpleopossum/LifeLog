@@ -7,6 +7,7 @@ import { NoAuthGuard } from './guards/no-auth.guard';
 import { NotesComponent } from './component/notes/notes.component';
 import { JournalComponent } from './component/journal/journal.component';
 import { StatsComponent } from './component/stats/stats.component';
+import { ChallengeComponent } from './component/challenge/challenge.component';
 
 
 export const routes: Routes = [
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [NoAuthGuard] },
   { path: 'journal', component: JournalComponent, canActivate: [AuthGuard] },
   { path: 'stats', component: StatsComponent, canActivate: [AuthGuard] },
+  { path: 'challenges', component: ChallengeComponent, canActivate: [AuthGuard] },
 
   { path: '**', component: HabitsComponent, canActivate: [AuthGuard] }
 ];

@@ -1,0 +1,68 @@
+<div class="challenges-container">
+  <div class="challenges-header">
+    <h2>Your challenges</h2>
+  </div>
+
+  @for (challenge of challenges; track challenge.id) {
+    <div class="challenge-card">
+      <div class="card-header">
+        <h3>{{ challenge.title }}</h3>
+        <div class="card-actions">
+            <img 
+                src="/Edit.png" 
+                alt="Edit" 
+                class="action-icon edit-icon" 
+                (click)="onEditChallenge(challenge)"
+              />
+            <img 
+               src="/trash.png" 
+               alt="Delete" 
+               class="action-icon delete-icon" 
+               (click)="onDeleteChallenge(challenge.id)"
+             />
+            </div>
+        </div>
+      
+      <p class="description">{{ challenge.description }}</p>
+
+      <div class="progress-container">
+        <div class="progress-track">
+            <div class="progress-bar" [style.width.%]="getChallengeProgress(challenge)"></div>
+        </div>
+
+        <div class="progress-nodes">
+            <div class="progress-node active" style="left: 0%;">
+                <span class="node-tooltip">Start</span>
+            </div>
+            @for (milestone of challenge.milestones; track milestone.id) {
+                <div
+                   class="progress-node"
+                   [class.active]="getCompletedMilestonesCount(challenge) >= ($index + 1)"
+                   [style.left.%]="(($index + 1) / (challenge.milestones.length)) * 100"
+               >
+                   <span class="node-tooltip">#{{ milestone.sequenceOrder }}</span>
+               </div>
+           }
+        </div>
+      </div>
+
+      <div class="milestones-list">
+        @for (milestone of challenge.milestones; track milestone.id) {
+          <div class="milestone-item">
+            <label [class.completed]="milestone.isCompleted">
+              <input 
+                type="checkbox" 
+                [checked]="milestone.isCompleted" 
+                (change)="onToggleMilestone(milestone)"
+              />
+              <span class="order">#{{ milestone.sequenceOrder }}</span>
+              {{ milestone.description }}
+            </label>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+  <button class="add-challenge-btn" (click)="onAddChallenge()">+ Add Challenge</button>
+</div>

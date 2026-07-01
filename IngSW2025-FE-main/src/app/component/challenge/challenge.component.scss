@@ -1,0 +1,210 @@
+.challenges-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.challenge-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border-left: 5px solid #3498db;
+  transition: transform 0.2s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #3498db;
+    padding: 1rem 1.5rem;
+    margin: 0 0 1.5rem 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+
+    h3 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 1.3rem;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .action-icon {
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+
+        &:hover {
+          transform: scale(1.15);
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .progress-container {
+    position: relative;
+    margin: 0 1.5rem 1.5rem 1.5rem; 
+    height: 20px;
+    display: flex;
+    align-items: center;
+
+    .progress-track {
+      position: absolute;
+      width: 100%;
+      height: 6px;
+      background-color: #e2e8f0; 
+      border-radius: 3px;
+      z-index: 1;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: #2ecc71; 
+      border-radius: 3px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      width:  0;
+    }
+
+    .progress-nodes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 2; 
+      pointer-events: none; 
+    }
+
+    .progress-node {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%); 
+      width: 14px;
+      height: 14px;
+      background-color: #ffffff;
+      border: 3px solid #cbd5e1; 
+      border-radius: 50%;
+      transition: all 0.3s ease;
+
+      &.active {
+        background-color: #2ecc71;
+        border-color: #2ecc71;
+        box-shadow: 0 0 6px rgba(46, 204, 113, 0.6);
+      }
+
+      .node-tooltip {
+        position: absolute;
+        top: -22px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.75rem;
+        font-weight: bold;
+        color: #7f8c8d;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      &:hover .node-tooltip {
+        opacity: 1;
+      }
+    }
+  } 
+
+  .description {
+    padding: 0 1.5rem;
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.milestones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.milestone-item {
+  background: #f8f9fa;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+
+  label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    user-select: none;
+
+    &.completed {
+      color: #95a5a6;
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+  }
+
+  input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    accent-color: #2ecc71;
+  }
+
+  .order {
+    font-weight: bold;
+    color: #95a5a6;
+    margin-right: 0.5rem;
+  }
+
+  &:has(label.completed) {
+    background: #edfbf2;
+    border-color: #c2eed4;
+  }
+}
+
+.add-challenge-btn {
+  padding: 8px 16px;
+  margin: 20px;
+  position: fixed;
+  bottom: 10px;
+  width: 130px;
+  transform: translateX(-50%);
+  left: 50%;
+  background-color: #ffffff;
+  border: 2px solid #1976d2;
+  border-radius: 20px;
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #1976d2;
+    color: #ffffff;
+  }
+}
