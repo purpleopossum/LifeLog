@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Habit, HabitUpdateDTO } from '../dto/habit.model';
+import { Habit, HabitUpdateDTO, PremadeHabit } from '../dto/habit.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -35,5 +35,13 @@ export class HabitService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getPremade(): Observable<PremadeHabit[]> {
+    return this.http.get<PremadeHabit[]>(`${this.apiUrl}/premade`);
+  }
+
+  createPremade(premadeHabit: PremadeHabit): Observable<PremadeHabit> {
+    return this.http.post<PremadeHabit>(`${this.apiUrl}/premade`, premadeHabit);
   }
 }

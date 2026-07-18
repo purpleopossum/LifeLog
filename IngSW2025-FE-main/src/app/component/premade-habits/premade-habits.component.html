@@ -1,0 +1,47 @@
+<div class="premade-container">
+  
+  <div class="header-section">
+    <button class="back-btn" (click)="goBack()">
+      <img src="go-back.png" alt="Back" style="width: 20px; height: 20px;">
+    </button>
+    <h2>Choose a premade Habit</h2>
+
+    @if (isAdmin) {
+    <button class="admin-add-btn" (click)="openAddPremadeDialog()">
+        Create new premade Habit
+    </button>
+    }
+  </div>
+
+  <div class="category-tabs">
+    @for (cat of categories; track cat) {
+      <button 
+        [class.active]="selectedCategory === cat" 
+        (click)="selectCategory(cat)">
+        {{ cat }}
+      </button>
+    }
+  </div>
+
+  <div class="premade-grid">
+    @for (habit of filteredPremadeHabits; track habit.id) {
+      <div class="premade-card">
+        <div class="card-info">
+          <div class="title-row">
+            <img class="time-icon" [src]="habit.partOfDay + '.png'" [alt]="habit.partOfDay">
+            <h3>{{ habit.title }}</h3>
+          </div>
+          <p class="desc">{{ habit.description }}</p>
+        </div>
+        
+        <button class="add-instant-btn" (click)="addPremadeHabit(habit)">
+          <img src="checkmark.png" alt="Add" style="width: 16px; height: 16px;">
+          <span>Add to your routine</span>
+        </button>
+      </div>
+    } @empty {
+      <p class="no-habits">No habits available in this category.</p>
+    }
+  </div>
+
+</div>

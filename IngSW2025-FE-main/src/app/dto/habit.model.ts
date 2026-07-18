@@ -12,3 +12,11 @@ export interface HabitUpdateDTO {
   partOfDay: string;
   userId: string;
 }
+
+export interface PremadeHabit {
+    id: number;
+    title: string;
+    description: string;
+    partOfDay: string;
+    category: string;
+}

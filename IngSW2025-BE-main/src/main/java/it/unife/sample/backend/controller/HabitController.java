@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.unife.sample.backend.model.Habit;
 import it.unife.sample.backend.model.User;
+import it.unife.sample.backend.model.PremadeHabit;
 import it.unife.sample.backend.service.HabitService;
 
 @RestController
@@ -26,6 +27,7 @@ public class HabitController {
 
     @Autowired
     private HabitService service;
+
 
     @GetMapping
     public List<Habit> getAll() {
@@ -87,5 +89,16 @@ public class HabitController {
         }
         service.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/premade")
+    public List<PremadeHabit> getPremadeHabits() {
+        return service.findPremadeHabits();
+    }
+
+    @PostMapping("/premade")
+    public ResponseEntity<PremadeHabit> createPremadeHabit(@RequestBody PremadeHabit premadeHabit) {
+        PremadeHabit createdPremadeHabit = service.createPremadeHabit(premadeHabit);
+        return ResponseEntity.ok(createdPremadeHabit);
     }
 }

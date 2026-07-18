@@ -14,6 +14,9 @@ export class User {
   habits: Habit[] = [];
 
   entries: Entry[] = [];
+
+  admin!: boolean;
+  premium!: boolean;
 }
 
 export enum EncouragementMessageType {

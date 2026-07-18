@@ -1,6 +1,8 @@
 package it.unife.sample.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,7 +18,7 @@ public class User {
     private UUID id;
     private String username;
     private String email;
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     
     @Column(unique = true, length = 6)
@@ -32,4 +34,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Entry> entries;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean admin = false;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean premium = false;
 }

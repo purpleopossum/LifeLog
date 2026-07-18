@@ -145,7 +145,30 @@
 
 </div>
 
-<!-- ADD BUTTON -->
-<button class="add-habit" (click)="openDialog()">
-  Add Habit
-</button>
+<div class="add-habit-container">
+  
+  @if (showAddMenu) {
+    <div class="add-habit-popup">
+      <button type="button" class="popup-option" (click)="selectPremadeHabits()">
+        <span>Choose premade habits</span>
+      </button>
+      
+      <button type="button" class="popup-option" (click)="selectCustomHabit()">
+        <span>Create a Habit</span>
+        <!-- Badge Visivo Premium se l'utente non lo è -->
+        @if (!currentUser?.premium) {
+          <span class="premium-badge">PRO</span>
+        }
+      </button>
+    </div>
+  }
+
+  <button class="add-habit" (click)="toggleAddMenu($event)">
+    Add Habit
+  </button>
+  
+</div>
+
+@if (showAddMenu) {
+  <div class="menu-overlay" (click)="closeAddMenu()"></div>
+}

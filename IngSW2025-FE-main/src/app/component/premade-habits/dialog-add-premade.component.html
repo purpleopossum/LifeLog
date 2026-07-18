@@ -1,0 +1,51 @@
+<div class="habit-dialog">
+  <h2>Create Catalog Habit</h2>
+  
+  <form class="habit-form" #form="ngForm" (ngSubmit)="save()">
+    
+    <div class="input-group">
+      <input 
+        type="text" 
+        [(ngModel)]="title" 
+        name="title" 
+        maxlength="26" 
+        placeholder="TITLE" 
+        required
+      />
+    </div>
+    
+    <div class="input-group">
+      <textarea 
+        id="description" 
+        [(ngModel)]="description" 
+        name="description" 
+        maxlength="100" 
+        placeholder="DESCRIPTION">
+      </textarea>
+    </div>
+    
+    <div class="input-group">
+      <select [(ngModel)]="partOfDay" name="partOfDay" required>
+        <option value="" disabled selected hidden>Time of the day</option>
+        <option value="Morning">MORNING</option>
+        <option value="Evening">AFTERNOON</option>
+        <option value="Night">EVENING</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <select [(ngModel)]="category" name="category" required>
+        <option value="" disabled selected hidden>Category</option>
+        <option value="Health">Health</option>
+        <option value="Productivity">Productivity</option>
+        <option value="Mind Training">Mind Training</option>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="cancel-btn" (click)="onNoClick()">Cancel</button>
+      <button type="submit" class="save-btn" [disabled]="form.invalid">Save</button>
+    </div>
+    
+  </form>
+</div>

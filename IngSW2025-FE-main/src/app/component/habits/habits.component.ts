@@ -1,5 +1,6 @@
 import {Component, inject, Inject, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import { Router } from '@angular/router';
 import {Habit} from '../../dto/habit.model';
 import {HabitService} from '../../service/habit.service';
 import {lastValueFrom} from 'rxjs';
@@ -44,11 +45,16 @@ export class HabitsComponent implements OnInit {
   filteredHabits: HabitViewModel[] = [];
   filteredHabitsAny: Habit[] = [];
   selectedStatus: string = 'All';
+  showAddMenu: boolean = false;
   readonly dialog = inject(MatDialog);
 
 
 
-  constructor(private habitService: HabitService, private checkinService: CheckinService) {}
+  constructor(
+      private habitService: HabitService, 
+      private checkinService: CheckinService,
+      private router: Router  
+  ) {}
 
 
   async ngOnInit() {
@@ -65,14 +71,18 @@ export class HabitsComponent implements OnInit {
     this.applyFilters();
   }
 
-  async loadData() {
-    const user = JSON.parse(localStorage.getItem('user')!);
+  get currentUser() {
+    return JSON.parse(localStorage.getItem('user')!);
+  }
 
-    this.habits = await lastValueFrom(this.habitService.getByUserId(user.id));
-    this.checkins = await lastValueFrom(this.checkinService.getByUser(user.id));
+  async loadData() {
+
+    this.habits = await lastValueFrom(this.habitService.getByUserId(this.currentUser.id));
+    this.checkins = await lastValueFrom(this.checkinService.getByUser(this.currentUser.id));
 
     this.applyFilters();
   }
+
 
   applyFilters() {
       const habitsMapped: HabitViewModel[] = this.habits.map(habit => {
@@ -131,7 +141,31 @@ export class HabitsComponent implements OnInit {
     });
   }
 
- 
+  toggleAddMenu(event: Event): void {
+    event.stopPropagation();
+    this.showAddMenu = !this.showAddMenu;
+  }
+
+  selectPremadeHabits(): void {
+    this.showAddMenu = false;
+    this.router.navigate(['/premade-habits']);
+  }
+
+  selectCustomHabit(): void {
+    this.showAddMenu = false;
+
+    if(this.currentUser && this.currentUser.premium === true) {
+        this.openDialog();
+    } else {
+        alert('This function is reserved to Premium users!');
+    }
+  }
+
+  closeAddMenu(): void {
+    this.showAddMenu = false;
+  }
+
+
 
   async updateCheckin(habit: Habit, status: string) {
     try {
