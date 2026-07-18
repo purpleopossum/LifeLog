@@ -1,17 +1,21 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PremadeHabit } from '../../dto/habit.model';
 import { HabitService } from '../../service/habit.service';
 import { DialogAddPremadeComponent } from './dialog-add-premade.component';
+import { DialogEditPremadeComponent } from './dialog-edit-premade.component';
 
 @Component({
   selector: 'app-premade-habits',
   templateUrl: './premade-habits.component.html',
   styleUrls: ['./premade-habits.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatDialogModule]
+  imports: [
+    CommonModule, 
+    MatDialogModule
+  ]
 })
 export class PremadeHabitsComponent implements OnInit {
   premadeHabits: PremadeHabit[] = [];
@@ -22,17 +26,22 @@ export class PremadeHabitsComponent implements OnInit {
   constructor(
     private service: HabitService, 
     private router: Router,
-    private dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.loadPremadeHabits();
     this.checkAdmin();
+    this.loadPremadeHabits();
   }
 
   get currentUser() {
-    return JSON.parse(localStorage.getItem('user')!);
+    try {
+      const userJson = localStorage.getItem('user');
+      return userJson ? JSON.parse(userJson) : null;
+    } catch (e) {
+      console.error("Error parsing user from localStorage:", e);
+      return null;
+    }
   }
 
   loadPremadeHabits(): void {
@@ -46,18 +55,9 @@ export class PremadeHabitsComponent implements OnInit {
     });
   }
 
-  checkAdmin():void {
-    try {
-        if(this.currentUser) {
-            this.isAdmin = this.currentUser && this.currentUser.admin === true;
-            this.cdr.detectChanges();
-        } else {
-            this.isAdmin = false;
-        }
-    } catch (e) {
-        console.error("Error occurred:", e);
-        this.isAdmin = false;
-    }
+  checkAdmin(): void {
+    const user = this.currentUser;
+    this.isAdmin = !!(user && user.admin === true);
   }
 
   get filteredPremadeHabits(): PremadeHabit[] {
@@ -66,6 +66,19 @@ export class PremadeHabitsComponent implements OnInit {
 
   selectCategory(category: string): void {
     this.selectedCategory = category;
+  }
+
+  openPremadeDialog(habit: PremadeHabit): void {
+    const dialogRef = this.dialog.open(DialogEditPremadeComponent, {
+      width: '400px',
+      data: { habit: habit }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.action === 'saved' || result?.action === 'deleted') {
+        this.loadPremadeHabits(); 
+      }
+    });
   }
 
   openAddPremadeDialog(): void {
@@ -119,5 +132,17 @@ export class PremadeHabitsComponent implements OnInit {
             alert('Error creating Habit.');
          }
      });
+  }
+
+  deletePremadeHabit(PHabitId: string) {
+    this.service.deletePremade(PHabitId).subscribe({
+        next: () => {
+            this.loadPremadeHabits();
+        },
+        error: (err) => {
+            console.error('Error deleting Habit:', err);
+            alert('Error deleting Habit.');
+        }
+    });
   }
 }

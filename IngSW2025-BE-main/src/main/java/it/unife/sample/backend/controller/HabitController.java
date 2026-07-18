@@ -101,4 +101,37 @@ public class HabitController {
         PremadeHabit createdPremadeHabit = service.createPremadeHabit(premadeHabit);
         return ResponseEntity.ok(createdPremadeHabit);
     }
+
+    @DeleteMapping("/premade/{id}")
+    public ResponseEntity<Void> deletePremadeHabit(@PathVariable UUID id) {
+        Optional<PremadeHabit> premadeHabitOpt = service.findPremadeHabits().stream()
+                .filter(ph -> ph.getId().equals(id))
+                .findFirst();
+
+        if (premadeHabitOpt.isPresent()) {
+            service.deletePremadeHabit(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/premade/{id}")
+    public ResponseEntity<Optional<PremadeHabit>> updatePremadeHabit(@PathVariable UUID id, @RequestBody PremadeHabit premadeHabit) {
+        Optional<PremadeHabit> premadeHabitOpt = service.findPremadeHabits().stream()
+                .filter(ph -> ph.getId().equals(id))
+                .findFirst();
+        if (premadeHabitOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            PremadeHabit entity = premadeHabitOpt.get();
+            entity.setTitle(premadeHabit.getTitle());
+            entity.setDescription(premadeHabit.getDescription());
+            entity.setPartOfDay(premadeHabit.getPartOfDay());
+            entity.setCategory(premadeHabit.getCategory());
+            Optional<PremadeHabit> updatedPremadeHabit = service.updatePremadeHabit(id, entity);
+            return ResponseEntity.ok(updatedPremadeHabit);
+        }
+    }
+
 }

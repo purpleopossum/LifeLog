@@ -3,45 +3,54 @@
   
   <form class="habit-form" #form="ngForm" (ngSubmit)="save()">
     
-    <div class="input-group">
-      <input 
-        type="text" 
-        [(ngModel)]="title" 
-        name="title" 
-        maxlength="26" 
-        placeholder="TITLE" 
-        required
-      />
-    </div>
-    
-    <div class="input-group">
-      <textarea 
-        id="description" 
-        [(ngModel)]="description" 
-        name="description" 
-        maxlength="100" 
-        placeholder="DESCRIPTION">
-      </textarea>
-    </div>
-    
-    <div class="input-group">
-      <select [(ngModel)]="partOfDay" name="partOfDay" required>
-        <option value="" disabled selected hidden>Time of the day</option>
-        <option value="Morning">MORNING</option>
-        <option value="Evening">AFTERNOON</option>
-        <option value="Night">EVENING</option>
-      </select>
+    <!-- Contenitore unico per i campi del form per abilitare lo scroll corretto -->
+    <div class="form-body">
+      <div class="input-group">
+        <label for="title">Title</label>
+        <input 
+          id="title"
+          type="text" 
+          [(ngModel)]="title" 
+          name="title" 
+          maxlength="26" 
+          placeholder="Enter title..." 
+          required
+        />
+      </div>
+      
+      <div class="input-group">
+        <label for="description">Description</label>
+        <textarea 
+          id="description" 
+          [(ngModel)]="description" 
+          name="description" 
+          maxlength="100" 
+          placeholder="Enter description...">
+        </textarea>
+      </div>
+      
+      <div class="input-group">
+        <label for="partOfDay">Time of the day</label>
+        <select id="partOfDay" [(ngModel)]="partOfDay" name="partOfDay" required>
+          <option value="" disabled selected hidden>Select time of day</option>
+          <option value="Morning">Morning</option>
+          <option value="Evening">Afternoon</option>
+          <option value="Night">Evening</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="category">Category</label>
+        <select id="category" [(ngModel)]="category" name="category" required>
+          <option value="" disabled selected hidden>Select category</option>
+          <option value="Health">Health</option>
+          <option value="Productivity">Productivity</option>
+          <option value="Mind Training">Mind Training</option>
+        </select>
+      </div>
     </div>
 
-    <div class="input-group">
-      <select [(ngModel)]="category" name="category" required>
-        <option value="" disabled selected hidden>Category</option>
-        <option value="Health">Health</option>
-        <option value="Productivity">Productivity</option>
-        <option value="Mind Training">Mind Training</option>
-      </select>
-    </div>
-
+    <!-- Barra delle azioni agganciata al fondo -->
     <div class="actions">
       <button type="button" class="cancel-btn" (click)="onNoClick()">Cancel</button>
       <button type="submit" class="save-btn" [disabled]="form.invalid">Save</button>

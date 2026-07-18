@@ -53,4 +53,17 @@ public class HabitService {
     public PremadeHabit createPremadeHabit(PremadeHabit premadeHabit) {
         return premadeHabitRepository.save(premadeHabit);
     }
+
+    public void deletePremadeHabit(UUID id) {
+        premadeHabitRepository.deleteById(id);
+    }
+
+    public Optional<PremadeHabit> updatePremadeHabit(UUID id, PremadeHabit updatedPremadeHabit) {
+        return premadeHabitRepository.findById(id).map(existingPremadeHabit -> {
+            existingPremadeHabit.setTitle(updatedPremadeHabit.getTitle());
+            existingPremadeHabit.setDescription(updatedPremadeHabit.getDescription());
+            existingPremadeHabit.setPartOfDay(updatedPremadeHabit.getPartOfDay());
+            return premadeHabitRepository.save(existingPremadeHabit);
+        });
+    }   
 }

@@ -1,0 +1,41 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>Edit Premade Habit</h2>
+  
+  <mat-dialog-content class="dialog-content">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input id="title" type="text" [(ngModel)]="habitData.title" placeholder="Habit title...">
+    </div>
+
+    <div class="form-group">
+      <label for="desc">Description</label>
+      <textarea id="desc" [(ngModel)]="habitData.description" placeholder="Habit description..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select id="category" [(ngModel)]="habitData.category">
+        @for (cat of categories; track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="partOfDay">Part of Day</label>
+      <select id="partOfDay" [(ngModel)]="habitData.partOfDay">
+        @for (part of partsOfDay; track part) {
+          <option [value]="part">{{ part | titlecase }}</option>
+        }
+      </select>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button class="delete-btn" (click)="delete()">Delete</button>
+    <div class="right-actions">
+      <button class="cancel-btn" (click)="close()">Cancel</button>
+      <button class="save-btn" (click)="save()">Save Changes</button>
+    </div>
+  </mat-dialog-actions>
+</div>

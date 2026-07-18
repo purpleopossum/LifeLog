@@ -2,13 +2,14 @@
   max-width: 800px;
   margin: 2rem auto;
   padding: 0 1rem;
-  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #333;
 
   .header-section {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     border-bottom: 2px solid #ecf0f1;
     padding-bottom: 0.5rem;
 
@@ -22,7 +23,7 @@
       border: none;
       cursor: pointer;
       opacity: 0.7;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s ease;
       display: flex;
       align-items: center;
 
@@ -32,7 +33,7 @@
     }
 
     .admin-add-btn {
-      background-color: #2ecc71;
+      background-color: #3498db;
       color: white;
       border: none;
       padding: 8px 16px;
@@ -43,7 +44,7 @@
       white-space: nowrap;
 
       &:hover {
-        background-color: #27ae60;
+        background-color: #2980b9;
       }
     }
   }
@@ -57,14 +58,14 @@
       padding: 8px 16px;
       border: 1px solid #cbd5e1;
       background-color: #ffffff;
-      color: #64748b;
+      color: #7f8c8d;
       border-radius: 20px;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s ease;
 
       &:hover {
-        background-color: #f1f5f9;
+        background-color: #f8f9fa;
       }
 
       &.active {
@@ -78,67 +79,84 @@
   .premade-grid {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   .premade-card {
     background: #ffffff;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    border-left: 5px solid #3498db;
+    transition: transform 0.2s ease;
+    overflow: hidden;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    transition: transform 0.2s, box-shadow 0.2s;
+    flex-direction: column;
 
     &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      transform: translateY(-2px);
     }
 
-    .card-info {
+    &.admin-mode {
+      border-top: 1px dashed #cbd5e1;
+      border-right: 1px dashed #cbd5e1;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+
+    .card-header {
       display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      flex: 1;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #3498db;
+      padding: 1rem 1.5rem;
+      margin: 0;
 
       .title-row {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
 
         .time-icon {
-          width: 18px;
-          height: 18px;
+          width: 20px;
+          height: 20px;
+          filter: brightness(0) invert(1);
         }
 
         h3 {
           margin: 0;
-          color: #2c3e50;
-          font-size: 1.1rem;
+          color: #ffffff;
+          font-size: 1.3rem;
         }
       }
+    }
 
-      .desc {
-        margin: 0;
-        color: #7f8c8d;
-        font-size: 0.9rem;
-      }
+    .card-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .description {
+      margin: 0;
+      color: #7f8c8d;
+      font-size: 0.95rem;
+      line-height: 1.4;
     }
 
     .add-instant-btn {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
+      align-self: flex-start;
+      gap: 8px;
+      padding: 8px 16px;
       background-color: #ffffff;
       border: 2px solid #2ecc71;
-      border-radius: 6px;
+      border-radius: 20px;
       color: #2ecc71;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
 
       &:hover {
         background-color: #2ecc71;
@@ -149,35 +167,109 @@
         }
       }
     }
+
+    .edit-btn {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 26px !important;
+      height: 26px !important;
+      min-width: 26px !important;
+      max-width: 26px !important;
+      min-height: 26px !important;
+      max-height: 26px !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+      filter: none !important;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+
+      img {
+        width: 16px !important;
+        height: 16px !important;
+        display: block;
+        filter: none !important;
+      }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        transform: scale(1.1);
+      }
+    }
+
+    .admin-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: #95a5a6;
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #edf2f7;
+    }
   }
 
   .no-habits {
     text-align: center;
-    color: #94a3b8;
+    color: #95a5a6;
     margin-top: 2rem;
+    font-size: 0.95rem;
   }
 }
-
-
 .habit-dialog {
-  padding: 1.5rem;
-  font-family: 'Segoe UI', Roboto, sans-serif;
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
 
   h2 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: #2c3e50;
+    margin: 0;
+    background-color: #3498db;
+    color: #ffffff;
     font-size: 1.25rem;
     font-weight: 600;
+    padding: 1rem 1.5rem;
+    flex-shrink: 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
   }
 
   .habit-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    flex: 1;
+    min-height: 0;
+    background-color: #ffffff;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+
+    // Zona interna scorrevole dei campi di testo
+    .form-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem; // Crea lo spazio corretto tra i blocchi input-group
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
 
     .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
       width: 100%;
+
+      label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #2c3e50;
+      }
 
       input, textarea, select {
         width: 100%;
@@ -185,10 +277,10 @@
         border: 1px solid #cbd5e1;
         border-radius: 8px;
         font-size: 0.9rem;
-        color: #334155;
+        color: #333;
         background-color: #fff;
         box-sizing: border-box;
-        transition: border-color 0.2s;
+        transition: border-color 0.2s ease;
 
         &:focus {
           outline: none;
@@ -198,49 +290,56 @@
 
       textarea {
         height: 90px;
+        min-height: 90px;
         resize: none;
       }
 
       select {
         cursor: pointer;
         appearance: none;
-        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8c8d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
         background-repeat: no-repeat;
-        background-position: right 10px center;
+        background-position: right 12px center;
         background-size: 16px;
         padding-right: 40px;
       }
     }
 
+    // Sezione pulsanti fissa in fondo
     .actions {
       display: flex;
       justify-content: flex-end;
       gap: 0.75rem;
-      margin-top: 0.5rem;
+      padding: 1rem 1.5rem 1.5rem 1.5rem;
+      flex-shrink: 0;
+      background-color: #ffffff;
+      border-top: 1px solid #edf2f7; // Sottile linea di stacco dai campi per consistenza visuale
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
 
       button {
         padding: 0.6rem 1.2rem;
+        border: none;
         border-radius: 6px;
         font-weight: 600;
         font-size: 0.9rem;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.2s ease;
       }
 
       .cancel-btn {
         background: #fff;
         border: 1px solid #cbd5e1;
-        color: #64748b;
+        color: #7f8c8d;
 
         &:hover {
-          background: #f8fafc;
-          color: #334155;
+          background: #f8f9fa;
+          color: #333;
         }
       }
 
       .save-btn {
         background: #2ecc71;
-        border: none;
         color: #fff;
 
         &:hover:not(:disabled) {
@@ -248,8 +347,8 @@
         }
 
         &:disabled {
-          background: #bdc3c7;
-          color: #7f8c8d;
+          background: #cbd5e1;
+          color: #95a5a6;
           cursor: not-allowed;
         }
       }

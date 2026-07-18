@@ -44,4 +44,10 @@ export class HabitService {
   createPremade(premadeHabit: PremadeHabit): Observable<PremadeHabit> {
     return this.http.post<PremadeHabit>(`${this.apiUrl}/premade`, premadeHabit);
   }
+  deletePremade(PHabitId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/premade/${PHabitId}`);
+  }
+  updatePremade(PHabitId:string, updatedPremade: PremadeHabit): Observable<PremadeHabit> {
+    return this.http.put<PremadeHabit>(`${this.apiUrl}/premade/${PHabitId}`, updatedPremade);
+  }
 }

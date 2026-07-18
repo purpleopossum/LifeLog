@@ -1,0 +1,141 @@
+.dialog-container {
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #333;
+  
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+
+  h2 {
+    margin: 0;
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    flex-shrink: 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #333;
+      background-color: #fff;
+      box-sizing: border-box;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #3498db;
+      }
+    }
+
+    textarea {
+      height: 90px;
+      min-height: 90px;
+      resize: none;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8c8d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+
+  button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .delete-btn {
+    background: #fff;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    
+    &:hover {
+      background: #e74c3c;
+      color: white;
+    }
+  }
+
+  .right-actions {
+    display: flex;
+    gap: 0.75rem;
+
+    .cancel-btn {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      color: #7f8c8d;
+
+      &:hover {
+        background: #f8f9fa;
+        color: #333;
+      }
+    }
+
+    .save-btn {
+      background: #2ecc71;
+      border: none;
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background: #27ae60;
+      }
+
+      &:disabled {
+        background: #cbd5e1;
+        color: #95a5a6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

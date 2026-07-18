@@ -7,9 +7,9 @@
     <h2>Choose a premade Habit</h2>
 
     @if (isAdmin) {
-    <button class="admin-add-btn" (click)="openAddPremadeDialog()">
-        Create new premade Habit
-    </button>
+      <button class="admin-add-btn" (click)="openAddPremadeDialog()">
+          Create new premade Habit
+      </button>
     }
   </div>
 
@@ -25,20 +25,42 @@
 
   <div class="premade-grid">
     @for (habit of filteredPremadeHabits; track habit.id) {
-      <div class="premade-card">
-        <div class="card-info">
-          <div class="title-row">
-            <img class="time-icon" [src]="habit.partOfDay + '.png'" [alt]="habit.partOfDay">
-            <h3>{{ habit.title }}</h3>
+      @if(!isAdmin) {
+        <div class="premade-card">
+          <div class="card-header">
+            <div class="title-row">
+              <img class="time-icon" [src]="(habit.partOfDay | titlecase) + '.png'" [alt]="habit.partOfDay | titlecase">
+              <h3>{{ habit.title }}</h3>
+            </div>
           </div>
-          <p class="desc">{{ habit.description }}</p>
+          
+          <div class="card-body">
+            <p class="description">{{ habit.description }}</p>
+            <button class="add-instant-btn" (click)="addPremadeHabit(habit)">
+              <img src="checkmark.png" alt="Add" style="width: 16px; height: 16px;">
+              <span>Add to your routine</span>
+            </button>
+          </div>
         </div>
-        
-        <button class="add-instant-btn" (click)="addPremadeHabit(habit)">
-          <img src="checkmark.png" alt="Add" style="width: 16px; height: 16px;">
-          <span>Add to your routine</span>
-        </button>
-      </div>
+      }
+      @else {
+        <div class="premade-card admin-mode">
+          <div class="card-header">
+            <div class="title-row">
+              <img class="time-icon" [src]="(habit.partOfDay | titlecase) + '.png'" [alt]="habit.partOfDay | titlecase">
+              <h3>{{ habit.title }}</h3>
+            </div>
+            
+            <button class="edit-btn" type="button" (click)="openPremadeDialog(habit)">
+              <img src="Edit.png" alt="Edit">
+            </button>
+          </div>
+          
+          <div class="card-body">
+            <p class="description">{{ habit.description }}</p>
+          </div>
+        </div>
+      }
     } @empty {
       <p class="no-habits">No habits available in this category.</p>
     }

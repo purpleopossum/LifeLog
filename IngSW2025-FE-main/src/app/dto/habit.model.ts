@@ -14,7 +14,7 @@ export interface HabitUpdateDTO {
 }
 
 export interface PremadeHabit {
-    id: number;
+    id: string;
     title: string;
     description: string;
     partOfDay: string;
