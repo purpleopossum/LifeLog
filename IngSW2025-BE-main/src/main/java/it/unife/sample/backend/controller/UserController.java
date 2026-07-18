@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -151,5 +152,11 @@ public class UserController {
         User updatedUser = service.regenerateFriendCode(id);
 
         return ResponseEntity.ok(updatedUser);
-}
+    }
+
+    @PatchMapping("/{id}/premium")
+    public ResponseEntity<User> setPremium(@PathVariable UUID id, @RequestBody Boolean premium) {
+        User updatedUser = service.setPremium(id, premium);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

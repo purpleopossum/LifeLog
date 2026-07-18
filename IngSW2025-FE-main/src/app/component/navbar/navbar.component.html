@@ -3,6 +3,11 @@
     <img id="logo" src="/logo.png" width="130" height="50"/>
   </a>
     <ul>
+      <li *ngIf="loggedOn && !loggedUser?.premium" class="premium-nav-item">
+        <a [routerLink]="['/checkout-premium']" class="buy-premium-btn">
+          ★ Buy Premium
+        </a>
+      </li>
       <li *ngIf="loggedOn" class="dropdown">
         <button class="dropbtn">{{ loggedUser.username }}</button>
         <div class="dropdown-content">

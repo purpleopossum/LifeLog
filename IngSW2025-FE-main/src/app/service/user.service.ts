@@ -66,4 +66,8 @@ export class UserService {
   regenerateFriendCode(userId: string): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/${userId}/regenerate-friend-code`, {});
   }
+
+  setPremium(userId: string, premium: boolean): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/${userId}/premium`, premium);
+  }
 }

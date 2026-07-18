@@ -137,5 +137,13 @@ public class UserService {
 
         user.setMessage(null);
         return repository.save(user);
-}
+    }
+
+    public User setPremium(UUID id, boolean premium) {
+        User user = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPremium(premium);
+        return repository.save(user);
+    }
 }

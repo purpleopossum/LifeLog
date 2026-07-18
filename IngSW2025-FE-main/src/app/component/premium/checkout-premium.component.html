@@ -1,0 +1,115 @@
+<div class="checkout-container">
+  
+  <div class="benefits-panel">
+    <div class="benefits-header">
+      <span class="badge">PRO UPGRADE</span>
+      <h1>Unlock the premium features</h1>
+      <p class="subtitle">Join the premium community and keep track of your life with your friends.</p>
+    </div>
+
+    <ul class="benefits-list">
+      <li>
+        <span class="icon">★</span>
+        <div>
+          <strong>Add your own habits</strong>
+          <p>Add all of your favourite hobbies to your list and keep track of them</p>
+        </div>
+      </li>
+      <li>
+        <span class="icon">📊</span>
+        <div>
+          <strong>Advanced stats</strong>
+          <p>See detailed graphs of your your friends' stats and compete while improving your life</p>
+        </div>
+      </li>
+    </ul>
+
+    <div class="price-tag">
+      <span class="amount">€9.99</span>
+    </div>
+  </div>
+
+  <div class="payment-panel">
+    
+    <div class="credit-card-preview">
+      <div class="card-brand">VISA</div>
+      <div class="card-number-display">
+        {{ cardNumber ? cardNumber : '•••• •••• •••• ••••' }}
+      </div>
+      <div class="card-footer">
+        <div class="card-holder">
+          <label>CARD HOLDER</label>
+          <div>{{ cardName ? (cardName | uppercase) : 'YOUR NAME' }}</div>
+        </div>
+        <div class="card-expiry">
+          <label>EXPIRES</label>
+          <div>{{ expiryDate ? expiryDate : 'MM/YY' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <form class="checkout-form" #checkoutForm="ngForm" (ngSubmit)="simulatePaymentSuccess()">
+      
+      <div class="form-group">
+        <label for="cardName">Card holder name</label>
+        <input 
+          type="text" 
+          id="cardName" 
+          [(ngModel)]="cardName" 
+          name="cardName" 
+          placeholder="Name and surname" 
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="cardNumber">Card number</label>
+        <input 
+          type="text" 
+          id="cardNumber" 
+          [(ngModel)]="cardNumber" 
+          name="cardNumber" 
+          placeholder="4532 •••• •••• ••••" 
+          maxlength="19"
+          (input)="onCardNumberInput($event)"
+          required
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expiryDate">Expiration date</label>
+          <input 
+            type="text" 
+            id="expiryDate" 
+            [(ngModel)]="expiryDate" 
+            name="expiryDate" 
+            placeholder="MM/YY" 
+            maxlength="5"
+            (input)="onExpiryInput($event)"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input 
+            type="password" 
+            id="cvv" 
+            [(ngModel)]="cvv" 
+            name="cvv" 
+            placeholder="•••" 
+            maxlength="3"
+            (input)="onCvvInput($event)"
+            required
+          />
+        </div>
+      </div>
+
+      <button type="submit" class="submit-payment-btn" [disabled]="checkoutForm.invalid">
+        Pay now (€9.99)
+      </button>
+    </form>
+
+  </div>
+</div>

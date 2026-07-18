@@ -142,3 +142,98 @@ button {
   transform: rotate(45deg);
   border-radius: 2px;
 }
+
+.partner-wrapper {
+  position: relative; // Essenziale per agganciare l'overlay assoluto
+  overflow: hidden;
+  min-height: 400px;
+}
+
+// Struttura del Blur selettivo
+.premium-blur-content {
+  transition: filter 0.3s ease;
+  width: 100%;
+  height: 100%;
+
+  &.blurred {
+    filter: blur(8px);
+    pointer-events: none; // Disabilita click o interazioni sui form sottostanti
+    user-select: none;    // Impedisce la selezione del testo nascosto
+  }
+}
+
+// Overlay di blocco stile Glassmorphism
+.premium-lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.65); // Sfondo semitrasparente chiaro
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 2rem;
+  box-sizing: border-box;
+
+  .lock-content {
+    text-align: center;
+    max-width: 320px;
+    background: #ffffff;
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.4s ease-out;
+
+    .lock-icon {
+      font-size: 3rem;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      margin: 0 0 0.75rem 0;
+      color: #2c3e50;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0 0 1.5rem 0;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .upgrade-now-btn {
+      width: 100%;
+      background: linear-gradient(45deg, #f1c40f, #f39c12);
+      color: #ffffff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(243, 156, 18, 0.4);
+      }
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

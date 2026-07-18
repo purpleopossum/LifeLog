@@ -9,6 +9,7 @@ import { JournalComponent } from './component/journal/journal.component';
 import { StatsComponent } from './component/stats/stats.component';
 import { ChallengeComponent } from './component/challenge/challenge.component';
 import { PremadeHabitsComponent } from './component/premade-habits/premade-habits.component';
+import { PremiumCheckoutComponent } from './component/premium/checkout-premium.component';
 
 
 export const routes: Routes = [
@@ -20,6 +21,7 @@ export const routes: Routes = [
   { path: 'stats', component: StatsComponent, canActivate: [AuthGuard] },
   { path: 'challenges', component: ChallengeComponent, canActivate: [AuthGuard] },
   { path: 'premade-habits', component: PremadeHabitsComponent, canActivate: [AuthGuard] },
+  { path: 'checkout-premium', component: PremiumCheckoutComponent, canActivate: [AuthGuard] },
 
   { path: '**', component: HabitsComponent, canActivate: [AuthGuard] }
 ];

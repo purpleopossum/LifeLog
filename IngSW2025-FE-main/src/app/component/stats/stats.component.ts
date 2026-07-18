@@ -16,11 +16,12 @@ import { Chart } from 'chart.js/auto';
 import { UserService } from '../../service/user.service';
 import { EncouragementMessageText, EncouragementMessageType } from '../../dto/user.model';
 import { Friendship } from '../../dto/friend.model';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-stats',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './stats.component.html',
   styleUrls: ['./stats.component.scss']
 })
