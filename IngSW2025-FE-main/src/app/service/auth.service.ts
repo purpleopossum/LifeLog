@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({ providedIn: 'root'})
 export class AuthService {
   private loggedInUser = new BehaviorSubject<any | null>(this.getUserFromStorage());
-  public user$ = this.loggedInUser.asObservable(); // Observable che la navbar può sottoscrivere
+  public user$ = this.loggedInUser.asObservable();
 
   private getUserFromStorage(): any | null {
     const storedUser = localStorage.getItem('user');

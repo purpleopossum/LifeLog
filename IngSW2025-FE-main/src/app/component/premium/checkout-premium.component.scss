@@ -194,8 +194,17 @@
         display: flex;
         gap: 15px;
 
-        .form-group {
-          flex: 1;
+        .form-group-expiry {
+          flex: 1.5;
+        }
+        .form-group-cvv {
+          flex:1;
+          max-width: 80px;
+
+          input {
+            text-allign: center;
+            letter-spacing: 2px;
+          }
         }
       }
 

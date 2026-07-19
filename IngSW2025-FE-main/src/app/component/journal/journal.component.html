@@ -61,8 +61,18 @@
           </h4>
 
           <div class="actions">
-            <div (click)="editEntry(entry)">✏️</div>
-            <div (click)="deleteEntry(entry.id)">🗑</div>
+            <img 
+                src="/Edit.png" 
+                alt="Edit" 
+                class="edit-btn" 
+                (click)="editEntry(entry)"
+            />
+            <img 
+                src="/trash.png" 
+                alt="Delete" 
+                class="delete-btn" 
+                (click)="deleteEntry(entry.id)"
+            />
           </div>
 
         </div>

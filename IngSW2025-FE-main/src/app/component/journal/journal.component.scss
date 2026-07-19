@@ -115,6 +115,39 @@ h3{
 .actions {
   position: relative;
   display: flex;
+
+  .edit-btn,
+  .delete-btn {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      object-fit: contain;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .edit-btn {
+      &:hover {
+        filter: grayscale(0%) brightness(1) sepia(100%) hue-rotate(190deg) saturate(500%);
+      }
+    }
+
+    .delete-btn {
+      filter: grayscale(100%) brightness(0.4);
+
+      &:hover {
+        filter: invert(38%) sepia(68%) saturate(3451%) hue-rotate(339deg) 
+              brightness(99%) contrast(87%);
+        opacity: 1;
+      }
+    }
 }
 
 .actions-content div {

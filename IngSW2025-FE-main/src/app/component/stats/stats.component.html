@@ -70,7 +70,7 @@
 
     <div class="premium-blur-content" [class.blurred]="!currentUser?.premium">
       
-      <div *ngIf="friend; else noPartnerTemplate">
+      <div *ngIf="friend; else noPartnerTemplate" class="partner-active-content">
         <h2>{{ friend.username }}'s productivity</h2>
 
         <div class="progress-container">
